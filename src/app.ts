@@ -7,6 +7,7 @@ import { cors } from 'hono/cors'
 import { secureHeaders } from 'hono/secure-headers'
 import { TIMEOUT } from './env'
 import { winstonLogger } from './utils/logger'
+import { wechat } from './routes/wechat'
 
 const app = new Hono()
 
@@ -26,7 +27,6 @@ app.onError((error, c) => {
         status = response.status
         statusText = response.statusText
     }
-    c.status(status as StatusCode)
     const method = c.req.method
     const requestPath = c.req.path
     winstonLogger.error(`Error in ${method} ${requestPath}: \n${message}`)
@@ -34,11 +34,25 @@ app.onError((error, c) => {
         status,
         statusText,
         message,
-    })
+    }, status as StatusCode)
+})
+
+app.notFound((c) => {
+    const method = c.req.method
+    const requestPath = c.req.path
+    const message = `Cannot ${method} ${requestPath}`
+    winstonLogger.warn(message)
+    return c.json({
+        status: 404,
+        statusText: 'Not Found',
+        message,
+    }, 404)
 })
 
 app.all('/', (c) => c.json({
     message: 'Hello Hono!',
 }))
+
+app.route('/wechat', wechat)
 
 export default app

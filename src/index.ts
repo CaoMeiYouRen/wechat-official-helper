@@ -8,4 +8,4 @@ serve({
     port: PORT,
 })
 
-logger.info(`hono-template 启动成功，访问地址：http://localhost:${PORT}`)
+logger.info(`wechat-official-helper 启动成功，访问地址：http://localhost:${PORT}`)

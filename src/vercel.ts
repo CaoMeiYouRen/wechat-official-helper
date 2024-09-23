@@ -7,6 +7,6 @@ export const runtime = 'nodejs'
 export const config = {
 }
 
-logger.info('hono-template 云函数启动成功')
+logger.info('wechat-official-helper 云函数启动成功')
 
 export default handle(app)

@@ -20,3 +20,8 @@ export const PORT = parseInt(process.env.PORT) || 3000
 export const LOGFILES = process.env.LOGFILES === 'true'
 
 export const TIMEOUT = parseInt(process.env.TIMEOUT) || 30000
+
+// 微信公众号相关配置
+export const WX_TOKEN = process.env.WX_TOKEN || ''
+export const WX_APP_ID = process.env.WX_APP_ID || ''
+export const WX_APP_SECRET = process.env.WX_APP_SECRET || ''
