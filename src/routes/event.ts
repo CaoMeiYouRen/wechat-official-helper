@@ -4,12 +4,12 @@ import { to } from 'await-to-js'
 import { json2xml, sha1, xml2json } from '@/utils/helper'
 import { WX_TOKEN } from '@/env'
 import winstonLogger from '@/utils/logger'
-import { WexinEventBody } from '@/interfaces/WexinEventBody'
-import { WexinReplyMessage } from '@/interfaces/WexinReplyMessage'
+import { WexinEventBody } from '@/interfaces/wexin-event-body'
+import { WexinReplyMessage } from '@/interfaces/wexin-reply-message'
 
-export const wechat = new Hono()
+export const event = new Hono()
 
-wechat.get('/', async (c) => {
+event.get('/', async (c) => {
     const query = c.req.query()
     const { signature, echostr, timestamp, nonce } = query
 
@@ -85,7 +85,7 @@ async function handleEvent(body: WexinEventBody) {
     }
 }
 
-wechat.post('/', async (c) => {
+event.post('/', async (c) => {
     const query = c.req.query()
     const { signature, timestamp, nonce } = query
     // 记录日志

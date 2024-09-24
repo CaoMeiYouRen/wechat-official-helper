@@ -25,3 +25,6 @@ export const TIMEOUT = parseInt(process.env.TIMEOUT) || 30000
 export const WX_TOKEN = process.env.WX_TOKEN || ''
 export const WX_APP_ID = process.env.WX_APP_ID || ''
 export const WX_APP_SECRET = process.env.WX_APP_SECRET || ''
+
+// 数据库配置
+export const DATABASE_URL = process.env.DATABASE_URL || process.env.POSTGRES_URL || ''

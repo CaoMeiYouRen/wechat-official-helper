@@ -7,7 +7,7 @@ import { cors } from 'hono/cors'
 import { secureHeaders } from 'hono/secure-headers'
 import { TIMEOUT } from './env'
 import { winstonLogger } from './utils/logger'
-import { wechat } from './routes/wechat'
+import { event } from './routes/event'
 
 const app = new Hono()
 
@@ -53,6 +53,6 @@ app.all('/', (c) => c.json({
     message: 'Hello Hono!',
 }))
 
-app.route('/wechat', wechat)
+app.route('/event', event)
 
 export default app

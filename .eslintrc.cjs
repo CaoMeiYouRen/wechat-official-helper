@@ -12,5 +12,6 @@ module.exports = {
     ],
     rules: {
         'no-console': 0,
+        '@typescript-eslint/indent': 0,
     },
 }
