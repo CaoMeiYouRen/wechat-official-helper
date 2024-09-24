@@ -1,4 +1,4 @@
-import { Entity, Column, OneToOne, JoinColumn } from 'typeorm'
+import { Entity, Column } from 'typeorm'
 import { BaseMessage } from './base'
 
 @Entity()

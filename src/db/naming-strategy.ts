@@ -20,7 +20,7 @@ export class SnakeCaseNamingStrategy extends DefaultNamingStrategy implements Na
     }
 
     joinTableName(firstTableName: string, secondTableName: string, firstPropertyName: string, secondPropertyName: string): string {
-        return snakeCase(`${firstTableName}_${firstPropertyName.replace(/\./gi, '_')}_${secondTableName}`)
+        return snakeCase(`${firstTableName}_${firstPropertyName.replace(/\./gi, '_')}_${secondTableName}_${secondPropertyName.replace(/\./gi, '_')}`)
     }
 
     joinTableColumnName(tableName: string, propertyName: string, columnName?: string): string {

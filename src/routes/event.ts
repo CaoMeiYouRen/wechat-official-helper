@@ -1,11 +1,11 @@
 import { Hono } from 'hono'
 import { HTTPException } from 'hono/http-exception'
 import { to } from 'await-to-js'
-import { json2xml, sha1, xml2json } from '@/utils/helper'
+import { sha1, toCamelCase, xml2json } from '@/utils/helper'
 import { WX_TOKEN } from '@/env'
 import winstonLogger from '@/utils/logger'
 import { WexinEventBody } from '@/interfaces/wexin-event-body'
-import { WexinReplyMessage } from '@/interfaces/wexin-reply-message'
+import { handleEvent } from '@/services/event'
 
 export const event = new Hono()
 
@@ -28,63 +28,6 @@ event.get('/', async (c) => {
     return c.text(echostr)
 })
 
-/**
- * 回复消息
- *
- * @author CaoMeiYouRen
- * @date 2024-09-24
- * @param data
- */
-function replyMessage(data: Partial<WexinReplyMessage>) {
-    return json2xml({
-        CreateTime: Math.floor(Date.now() / 1000),
-        ...data,
-    })
-}
-
-async function handleEvent(body: WexinEventBody) {
-    const { FromUserName, ToUserName, MsgType } = body
-    switch (MsgType) {
-        case 'text': { // 文本消息
-            const { Content } = body
-            const RespContent = `您发送的消息是：${Content}`
-            return replyMessage({
-                ToUserName: FromUserName,
-                FromUserName: ToUserName,
-                MsgType: 'text',
-                Content: RespContent,
-            })
-        }
-        case 'image': { // 图片消息
-            const { MediaId } = body
-            return replyMessage({
-                ToUserName: FromUserName,
-                FromUserName: ToUserName,
-                MsgType: 'image',
-                Image: {
-                    MediaId,
-                },
-            })
-        }
-        case 'event': { // 事件
-            const { Event } = body
-            if (Event === 'subscribe') { // 订阅
-                const RespContent = '感谢订阅'
-                return replyMessage({
-                    ToUserName: FromUserName,
-                    FromUserName: ToUserName,
-                    MsgType: 'text',
-                    Content: RespContent,
-                })
-            }
-            // unsubscribe 取消订阅
-            return 'success'
-        }
-        default:
-            return 'success'
-    }
-}
-
 event.post('/', async (c) => {
     const query = c.req.query()
     const { signature, timestamp, nonce } = query
@@ -105,7 +48,7 @@ event.post('/', async (c) => {
     if (error) {
         throw new HTTPException(400, { message: `Invalid XML: \n${error.message}` })
     }
-    const body = xmlData as WexinEventBody
+    const body = toCamelCase(xmlData as WexinEventBody)
 
     winstonLogger.isDebugEnabled() && winstonLogger.debug(`Body parameters: \n${JSON.stringify(body)}`)
 

@@ -1,5 +1,7 @@
 import crypto from 'crypto'
+import { camelCase, upperFirst } from 'lodash-es'
 import xml2js from 'xml2js'
+import { CamelCaseObject, PascalCaseObject } from '@/interfaces/utils'
 
 export function sha1(str: string) {
     return crypto.createHash('sha1').update(str).digest('hex')
@@ -18,4 +20,42 @@ export async function xml2json(str: string) {
         explicitRoot: false, // 是否需要根节点
     })
     return parser.parseStringPromise(str)
+}
+
+/**
+ * 将所有字段名转换为小驼峰命名
+ * @param obj
+ * @returns
+ */
+export function toCamelCase<T>(obj: T): CamelCaseObject<T> {
+    const result: any = {}
+
+    for (const key in obj) {
+        if (Object.prototype.hasOwnProperty.call(obj, key)) {
+            const camelCaseKey = camelCase(key)
+            result[camelCaseKey] = obj[key]
+            delete obj[key]
+        }
+    }
+
+    return result
+}
+
+/**
+ * 将对象的字段名转换为大驼峰命名
+ * @param obj
+ * @returns
+ */
+export function toPascalCase<T>(obj: T): PascalCaseObject<T> {
+    const result: any = {}
+
+    for (const key in obj) {
+        if (Object.prototype.hasOwnProperty.call(obj, key)) {
+            const pascalCaseKey = upperFirst(camelCase(key))
+            result[pascalCaseKey] = obj[key]
+            delete obj[key]
+        }
+    }
+
+    return result
 }

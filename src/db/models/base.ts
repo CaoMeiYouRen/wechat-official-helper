@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn } from 'typeorm'
+import { PrimaryGeneratedColumn, Column } from 'typeorm'
 
 // @Entity()
 export class Base {
