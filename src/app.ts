@@ -7,7 +7,8 @@ import { cors } from 'hono/cors'
 import { secureHeaders } from 'hono/secure-headers'
 import { __DEV__, TIMEOUT } from './env'
 import { winstonLogger } from './utils/logger'
-import { event } from './routes/event'
+import eventRoute from './routes/event'
+import messageRoute from './routes/message'
 import { getDataSource } from './db'
 
 const app = new Hono()
@@ -54,7 +55,9 @@ app.all('/', (c) => c.json({
     message: 'Hello Hono!',
 }))
 
-app.route('/event', event)
+app.route('/event', eventRoute)
+
+app.route('/message', messageRoute)
 
 __DEV__ && app.post('/synchronize', async (c) => {
     const dataSource = await getDataSource()

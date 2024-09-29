@@ -1,3 +1,7 @@
+import { getDataSource } from '@/db'
+import { BaseMessage } from '@/db/models/base'
+import { ClickEvent, LocationEvent, ScanEvent, SubscribeAndScanEvent, SubscribeEvent, ViewEvent } from '@/db/models/event'
+import { ImageMessage, LinkMessage, LocationMessage, ShortVideoMessage, TextMessage, VideoMessage, VoiceMessage } from '@/db/models/message'
 import { CamelCaseObject } from '@/interfaces/utils'
 import { WexinEventBody } from '@/interfaces/wexin-event-body'
 import { WexinReplyMessage } from '@/interfaces/wexin-reply-message'
@@ -27,6 +31,20 @@ export function replyMessage(data: Partial<CamelCaseObject<WexinReplyMessage>>) 
  */
 export async function handleEvent(body: CamelCaseObject<WexinEventBody>) {
     const { fromUserName, toUserName, msgType } = body
+    // 存储用户消息到数据库
+    const entityManager = (await getDataSource()).manager
+    // 如果是消息，则根据 msgId 去重复
+    if (body.msgType !== 'event') {
+        // 根据 msgId 去重复
+        const exist = await entityManager.findOneBy(BaseMessage, { msgId: body.msgId })
+        if (exist) {
+            return 'success'
+        }
+    }
+    // 如果是事件，则不处理重复
+
+    await saveEvent(body)
+
     switch (msgType) {
         case 'text': { // 文本消息
             const { content } = body
@@ -51,19 +69,122 @@ export async function handleEvent(body: CamelCaseObject<WexinEventBody>) {
         }
         case 'event': { // 事件
             const { event } = body
-            if (event === 'subscribe') { // 订阅
-                const RespContent = '感谢订阅'
-                return replyMessage({
-                    toUserName: fromUserName,
-                    fromUserName: toUserName,
-                    msgType: 'text',
-                    content: RespContent,
-                })
+            switch (event) {
+                case 'subscribe': { // 订阅
+                    const RespContent = '感谢订阅'
+                    return replyMessage({
+                        toUserName: fromUserName,
+                        fromUserName: toUserName,
+                        msgType: 'text',
+                        content: RespContent,
+                    })
+                }
+                case 'unsubscribe': // 取消订阅
+                    break
+                case 'CLICK': // 点击菜单拉取消息时的事件推送
+                    break
+                case 'SCAN': // 扫描带参数二维码事件的事件推送
+                    break
+                case 'LOCATION': // 上报地理位置事件
+                    break
+                case 'VIEW': // 点击菜单跳转链接时的事件推送
+                    break
+                default:
+                    return 'success'
             }
-            // unsubscribe 取消订阅
+            return 'success'
+        }
+        case 'voice': { // 语音消息
+            return 'success'
+        }
+        case 'video': {   // 视频消息
+            return 'success'
+        }
+        case 'shortvideo': { // 小视频消息
+            return 'success'
+        }
+        case 'location': { // 位置消息
+            return 'success'
+        }
+        case 'link': { // 链接消息
             return 'success'
         }
         default:
             return 'success'
+    }
+}
+
+/**
+ * 存储用户消息到数据库
+ *
+ * @author CaoMeiYouRen
+ * @date 2024-09-30
+ * @export
+ * @param body
+ */
+export async function saveEvent(body: CamelCaseObject<WexinEventBody>) {
+    const { msgType } = body
+    const entityManager = (await getDataSource()).manager
+    switch (msgType) {
+        case 'text': { // 文本消息
+            await entityManager.save(entityManager.create(TextMessage, body))
+            return
+        }
+        case 'image': { // 图片消息
+            await entityManager.save(entityManager.create(ImageMessage, body))
+            return
+        }
+        case 'event': { // 事件
+            const { event } = body
+            switch (event) {
+                case 'subscribe': { // 订阅
+                    if ((body as SubscribeAndScanEvent).eventKey) {
+                        await entityManager.save(entityManager.create(SubscribeAndScanEvent, body as SubscribeAndScanEvent))
+                        return
+                    }
+                    await entityManager.save(entityManager.create(SubscribeEvent, body))
+                    return
+                }
+                case 'unsubscribe': // 取消订阅
+                    await entityManager.save(entityManager.create(SubscribeEvent, body))
+                    return
+                case 'CLICK': // 点击菜单拉取消息时的事件推送
+                    await entityManager.save(entityManager.create(ClickEvent, body))
+                    return
+                case 'SCAN': // 扫描带参数二维码事件的事件推送
+                    await entityManager.save(entityManager.create(ScanEvent, body))
+                    return
+                case 'LOCATION': // 上报地理位置事件
+                    await entityManager.save(entityManager.create(LocationEvent, body))
+                    return
+                case 'VIEW': // 点击菜单跳转链接时的事件推送
+                    await entityManager.save(entityManager.create(ViewEvent, body))
+                    return
+                default:
+                    return
+            }
+        }
+        case 'voice': { // 语音消息
+            await entityManager.save(entityManager.create(VoiceMessage, body))
+            return
+        }
+        case 'video': {   // 视频消息
+            await entityManager.save(entityManager.create(VideoMessage, body))
+            return
+        }
+        case 'shortvideo': { // 小视频消息
+            await entityManager.save(entityManager.create(ShortVideoMessage, body))
+            return
+        }
+        case 'location': { // 位置消息
+            await entityManager.save(entityManager.create(LocationMessage, body))
+            return
+        }
+        case 'link': { // 链接消息
+            await entityManager.save(entityManager.create(LinkMessage, body))
+            return
+        }
+        default:
+            return null
     }
 }

@@ -7,9 +7,9 @@ import winstonLogger from '@/utils/logger'
 import { WexinEventBody } from '@/interfaces/wexin-event-body'
 import { handleEvent } from '@/services/event'
 
-export const event = new Hono()
+const app = new Hono()
 
-event.get('/', async (c) => {
+app.get('/', async (c) => {
     const query = c.req.query()
     const { signature, echostr, timestamp, nonce } = query
 
@@ -28,7 +28,7 @@ event.get('/', async (c) => {
     return c.text(echostr)
 })
 
-event.post('/', async (c) => {
+app.post('/', async (c) => {
     const query = c.req.query()
     const { signature, timestamp, nonce } = query
     // 记录日志
@@ -55,6 +55,8 @@ event.post('/', async (c) => {
     const response = await handleEvent(body)
 
     winstonLogger.isDebugEnabled() && winstonLogger.debug(`Response: \n${response}`)
-
+    c.header('Content-Type', 'text/xml')
     return c.text(response, 200)
 })
+
+export default app

@@ -1,4 +1,4 @@
-import { PrimaryGeneratedColumn, Column, Entity, TableInheritance, ChildEntity } from 'typeorm'
+import { PrimaryGeneratedColumn, Column, Entity, TableInheritance, ChildEntity, CreateDateColumn } from 'typeorm'
 import { IBaseMessage } from '@/interfaces/wexin-message'
 import { IBaseEvent } from '@/interfaces/wexin-event'
 
@@ -7,6 +7,9 @@ import { IBaseEvent } from '@/interfaces/wexin-event'
 export class Base {
     @PrimaryGeneratedColumn()
     id: number
+
+    @CreateDateColumn()
+    createdAt: Date
 
     @Column({ type: 'varchar', length: 50, nullable: false })
     msgType: string

@@ -1,6 +1,6 @@
 import { Column, ChildEntity } from 'typeorm'
 import { BaseMessage } from './base'
-import { IImageMessage, ILinkMessage, ILocationMessage, IShortvideoMessage, ITextMessage, IVideoMessage, IVoiceMessage } from '@/interfaces/wexin-message'
+import { IImageMessage, ILinkMessage, ILocationMessage, IShortVideoMessage, ITextMessage, IVideoMessage, IVoiceMessage } from '@/interfaces/wexin-message'
 
 @ChildEntity()
 export class TextMessage extends BaseMessage implements ITextMessage {
@@ -48,7 +48,7 @@ export class VideoMessage extends BaseMessage implements IVideoMessage {
 }
 
 @ChildEntity()
-export class ShortvideoMessage extends BaseMessage implements IShortvideoMessage {
+export class ShortVideoMessage extends BaseMessage implements IShortVideoMessage {
 
     declare msgType: 'shortvideo'
 

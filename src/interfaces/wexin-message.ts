@@ -88,7 +88,7 @@ export interface VideoMessage extends BaseMessage {
 
 export type IVideoMessage = CamelCaseObject<VideoMessage>
 
-export interface ShortvideoMessage extends BaseMessage {
+export interface ShortVideoMessage extends BaseMessage {
     MsgType: 'shortvideo'
     /**
      * 视频消息媒体id，可以调用获取临时素材接口拉取数据。
@@ -100,7 +100,7 @@ export interface ShortvideoMessage extends BaseMessage {
     ThumbMediaId: string
 }
 
-export type IShortvideoMessage = CamelCaseObject<ShortvideoMessage>
+export type IShortVideoMessage = CamelCaseObject<ShortVideoMessage>
 
 export interface LocationMessage extends BaseMessage {
     MsgType: 'location'
@@ -142,7 +142,7 @@ export interface LinkMessage extends BaseMessage {
 
 export type ILinkMessage = CamelCaseObject<LinkMessage>
 
-export type WexinMessage = TextMessage | ImageMessage | VoiceMessage | VideoMessage | ShortvideoMessage | LocationMessage | LinkMessage
+export type WexinMessage = TextMessage | ImageMessage | VoiceMessage | VideoMessage | IShortVideoMessage | LocationMessage | LinkMessage
 
 export type IWexinMessage = CamelCaseObject<WexinMessage>
 

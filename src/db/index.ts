@@ -1,7 +1,7 @@
 import { DataSource } from 'typeorm'
 import { SnakeCaseNamingStrategy } from './naming-strategy'
 import { SubscribeEvent, SubscribeAndScanEvent, ScanEvent, LocationEvent, ClickEvent, ViewEvent } from './models/event'
-import { TextMessage, ImageMessage, VoiceMessage, VideoMessage, ShortvideoMessage, LocationMessage, LinkMessage } from './models/message'
+import { TextMessage, ImageMessage, VoiceMessage, VideoMessage, ShortVideoMessage, LocationMessage, LinkMessage } from './models/message'
 import { Base, BaseEvent, BaseMessage } from './models/base'
 import { __DEV__, DATABASE_URL } from '@/env'
 
@@ -21,7 +21,7 @@ export async function getDataSource() {
                 ImageMessage,
                 VoiceMessage,
                 VideoMessage,
-                ShortvideoMessage,
+                ShortVideoMessage,
                 LocationMessage,
                 LinkMessage,
                 SubscribeEvent,
@@ -41,8 +41,8 @@ export async function getDataSource() {
             parseInt8: true,
             logger: __DEV__ ? 'debug' : 'simple-console',
         })
+        await dataSource.initialize()
     }
-    await dataSource.initialize()
     return dataSource
 }
 
