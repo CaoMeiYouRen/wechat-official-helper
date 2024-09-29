@@ -1,3 +1,5 @@
+import { CamelCaseObject } from './utils'
+
 /**
  * 回复消息
  */
@@ -20,6 +22,8 @@ export interface BaseReplyMessage {
     CreateTime: string | number
 }
 
+export type IBaseReplyMessage = CamelCaseObject<BaseReplyMessage>
+
 export interface ReplyTextMessage extends BaseReplyMessage {
     MsgType: 'text'
     /**
@@ -27,6 +31,8 @@ export interface ReplyTextMessage extends BaseReplyMessage {
      */
     Content: string
 }
+
+export type IReplyTextMessage = CamelCaseObject<ReplyTextMessage>
 
 export interface ReplyImageMessage extends BaseReplyMessage {
     MsgType: 'image'
@@ -38,6 +44,8 @@ export interface ReplyImageMessage extends BaseReplyMessage {
     }
 }
 
+export type IReplyImageMessage = CamelCaseObject<ReplyImageMessage>
+
 export interface ReplyVoiceMessage extends BaseReplyMessage {
     MsgType: 'voice'
     Voice: {
@@ -47,6 +55,8 @@ export interface ReplyVoiceMessage extends BaseReplyMessage {
         MediaId: string
     }
 }
+
+export type IReplyVoiceMessage = CamelCaseObject<ReplyVoiceMessage>
 
 export interface ReplyVideoMessage extends BaseReplyMessage {
     MsgType: 'video'
@@ -65,6 +75,8 @@ export interface ReplyVideoMessage extends BaseReplyMessage {
         Description?: string
     }
 }
+
+export type IReplyVideoMessage = CamelCaseObject<ReplyVideoMessage>
 
 export interface ReplyMusicMessage extends BaseReplyMessage {
     MsgType: 'music'
@@ -91,6 +103,8 @@ export interface ReplyMusicMessage extends BaseReplyMessage {
         ThumbMediaId: string
     }
 }
+
+export type IReplyMusicMessage = CamelCaseObject<ReplyMusicMessage>
 
 interface Item {
     /**
@@ -127,4 +141,8 @@ export interface ReplyNewsMessage extends BaseReplyMessage {
     Articles: Articles
 }
 
+export type IReplyNewsMessage = CamelCaseObject<ReplyNewsMessage>
+
 export type WexinReplyMessage = ReplyTextMessage | ReplyImageMessage | ReplyVoiceMessage | ReplyVideoMessage | ReplyMusicMessage | ReplyNewsMessage
+
+export type IWexinReplyMessage = CamelCaseObject<WexinReplyMessage>

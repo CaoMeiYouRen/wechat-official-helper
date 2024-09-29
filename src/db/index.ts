@@ -2,7 +2,8 @@ import { DataSource } from 'typeorm'
 import { SnakeCaseNamingStrategy } from './naming-strategy'
 import { SubscribeEvent, SubscribeAndScanEvent, ScanEvent, LocationEvent, ClickEvent, ViewEvent } from './models/event'
 import { TextMessage, ImageMessage, VoiceMessage, VideoMessage, ShortvideoMessage, LocationMessage, LinkMessage } from './models/message'
-import { __DEV__ } from '@/env'
+import { Base, BaseEvent, BaseMessage } from './models/base'
+import { __DEV__, DATABASE_URL } from '@/env'
 
 let dataSource: DataSource
 
@@ -10,8 +11,12 @@ export async function getDataSource() {
     if (!dataSource) {
         dataSource = new DataSource({
             type: 'postgres',
+            url: DATABASE_URL,
             // 实体类
             entities: [
+                Base,
+                BaseEvent,
+                BaseMessage,
                 TextMessage,
                 ImageMessage,
                 VoiceMessage,
@@ -34,6 +39,7 @@ export async function getDataSource() {
             namingStrategy: new SnakeCaseNamingStrategy(),
             // 解析 int8 到 number
             parseInt8: true,
+            logger: __DEV__ ? 'debug' : 'simple-console',
         })
     }
     await dataSource.initialize()

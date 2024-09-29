@@ -5,9 +5,10 @@ import { HTTPException } from 'hono/http-exception'
 import { StatusCode } from 'hono/utils/http-status'
 import { cors } from 'hono/cors'
 import { secureHeaders } from 'hono/secure-headers'
-import { TIMEOUT } from './env'
+import { __DEV__, TIMEOUT } from './env'
 import { winstonLogger } from './utils/logger'
 import { event } from './routes/event'
+import { getDataSource } from './db'
 
 const app = new Hono()
 
@@ -54,5 +55,13 @@ app.all('/', (c) => c.json({
 }))
 
 app.route('/event', event)
+
+__DEV__ && app.post('/synchronize', async (c) => {
+    const dataSource = await getDataSource()
+    await dataSource.synchronize()
+    return c.json({
+        message: 'OK',
+    })
+})
 
 export default app

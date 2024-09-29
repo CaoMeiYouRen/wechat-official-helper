@@ -1,3 +1,5 @@
+import { CamelCaseObject } from './utils'
+
 export interface BaseEvent {
     /**
      *消息类型
@@ -21,12 +23,16 @@ export interface BaseEvent {
     Event: string
 }
 
+export type IBaseEvent = CamelCaseObject<BaseEvent>
+
 export interface SubscribeEvent extends BaseEvent {
     /**
      * 事件类型，subscribe(订阅)、unsubscribe(取消订阅)
      */
     Event: 'subscribe' | 'unsubscribe'
 }
+
+export type ISubscribeEvent = CamelCaseObject<SubscribeEvent>
 
 /**
  * 用户未关注时，进行关注后的事件推送
@@ -48,6 +54,8 @@ export interface SubscribeAndScanEvent extends BaseEvent {
     Ticket: string
 }
 
+export type ISubscribeAndScanEvent = CamelCaseObject<SubscribeAndScanEvent>
+
 export interface ScanEvent extends BaseEvent {
     Event: 'SCAN'
     /**
@@ -59,6 +67,8 @@ export interface ScanEvent extends BaseEvent {
      */
     Ticket: string
 }
+
+export type IScanEvent = CamelCaseObject<ScanEvent>
 
 export interface LocationEvent extends BaseEvent {
     Event: 'LOCATION'
@@ -76,6 +86,8 @@ export interface LocationEvent extends BaseEvent {
     Precision: string
 }
 
+export type ILocationEvent = CamelCaseObject<LocationEvent>
+
 /**
  * 点击菜单拉取消息时的事件推送
  *
@@ -91,6 +103,8 @@ export interface ClickEvent extends BaseEvent {
      */
     EventKey: string
 }
+
+export type IClickEvent = CamelCaseObject<ClickEvent>
 
 /**
  *点击菜单跳转链接时的事件推送
@@ -108,4 +122,8 @@ export interface ViewEvent extends BaseEvent {
     EventKey: string
 }
 
+export type IViewEvent = CamelCaseObject<ViewEvent>
+
 export type WexinEvent = SubscribeEvent | SubscribeAndScanEvent | ScanEvent | LocationEvent | ClickEvent | ViewEvent
+
+export type IWexinEvent = CamelCaseObject<WexinEvent>

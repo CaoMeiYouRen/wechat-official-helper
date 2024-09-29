@@ -1,6 +1,9 @@
-import { PrimaryGeneratedColumn, Column } from 'typeorm'
+import { PrimaryGeneratedColumn, Column, Entity, TableInheritance, ChildEntity } from 'typeorm'
+import { IBaseMessage } from '@/interfaces/wexin-message'
+import { IBaseEvent } from '@/interfaces/wexin-event'
 
-// @Entity()
+@Entity()
+@TableInheritance({ column: { type: 'varchar', name: 'type' } })
 export class Base {
     @PrimaryGeneratedColumn()
     id: number
@@ -19,18 +22,23 @@ export class Base {
 
 }
 
-export class BaseEvent extends Base {
-    // @Column({ type: 'varchar', length: 50, nullable: false })
-    // event: string
+@ChildEntity()
+export class BaseEvent extends Base implements IBaseEvent {
+
+    declare msgType: 'event'
+
+    @Column({ type: 'varchar', length: 50, nullable: false })
+    event: string
 }
 
-export class BaseMessage extends Base {
+@ChildEntity()
+export class BaseMessage extends Base implements IBaseMessage {
     @Column({ type: 'varchar', length: 64, nullable: true })
     msgId: string
 
     @Column({ type: 'varchar', length: 64, nullable: true })
-    msgDataId?: string
+    msgDataId: string
 
     @Column({ type: 'varchar', length: 10, nullable: true })
-    idx?: string
+    idx: string
 }

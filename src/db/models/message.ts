@@ -1,14 +1,21 @@
-import { Entity, Column } from 'typeorm'
+import { Column, ChildEntity } from 'typeorm'
 import { BaseMessage } from './base'
+import { IImageMessage, ILinkMessage, ILocationMessage, IShortvideoMessage, ITextMessage, IVideoMessage, IVoiceMessage } from '@/interfaces/wexin-message'
 
-@Entity()
-export class TextMessage extends BaseMessage {
+@ChildEntity()
+export class TextMessage extends BaseMessage implements ITextMessage {
+
+    declare msgType: 'text'
+
     @Column({ type: 'varchar', length: 1024, nullable: true })
     content: string
 }
 
-@Entity()
-export class ImageMessage extends BaseMessage {
+@ChildEntity()
+export class ImageMessage extends BaseMessage implements IImageMessage {
+
+    declare msgType: 'image'
+
     @Column({ type: 'varchar', length: 255, nullable: true })
     picUrl: string
 
@@ -16,8 +23,11 @@ export class ImageMessage extends BaseMessage {
     mediaId: string
 }
 
-@Entity()
-export class VoiceMessage extends BaseMessage {
+@ChildEntity()
+export class VoiceMessage extends BaseMessage implements IVoiceMessage {
+
+    declare msgType: 'voice'
+
     @Column({ type: 'varchar', length: 255, nullable: true })
     mediaId: string
 
@@ -25,8 +35,11 @@ export class VoiceMessage extends BaseMessage {
     format: string
 }
 
-@Entity()
-export class VideoMessage extends BaseMessage {
+@ChildEntity()
+export class VideoMessage extends BaseMessage implements IVideoMessage {
+
+    declare msgType: 'video'
+
     @Column({ type: 'varchar', length: 255, nullable: true })
     mediaId: string
 
@@ -34,8 +47,11 @@ export class VideoMessage extends BaseMessage {
     thumbMediaId: string
 }
 
-@Entity()
-export class ShortvideoMessage extends BaseMessage {
+@ChildEntity()
+export class ShortvideoMessage extends BaseMessage implements IShortvideoMessage {
+
+    declare msgType: 'shortvideo'
+
     @Column({ type: 'varchar', length: 255, nullable: true })
     mediaId: string
 
@@ -43,8 +59,11 @@ export class ShortvideoMessage extends BaseMessage {
     thumbMediaId: string
 }
 
-@Entity()
-export class LocationMessage extends BaseMessage {
+@ChildEntity()
+export class LocationMessage extends BaseMessage implements ILocationMessage {
+
+    declare msgType: 'location'
+
     @Column({ type: 'varchar', length: 255, nullable: true })
     locationX: string
 
@@ -58,8 +77,11 @@ export class LocationMessage extends BaseMessage {
     label: string
 }
 
-@Entity()
-export class LinkMessage extends BaseMessage {
+@ChildEntity()
+export class LinkMessage extends BaseMessage implements ILinkMessage {
+
+    declare msgType: 'link'
+
     @Column({ type: 'varchar', length: 255, nullable: true })
     title: string
 

@@ -1,3 +1,5 @@
+import { CamelCaseObject } from './utils'
+
 /**
  * 接收消息
  */
@@ -32,6 +34,8 @@ export interface BaseMessage {
     Idx: string
 }
 
+export type IBaseMessage = CamelCaseObject<BaseMessage>
+
 export interface TextMessage extends BaseMessage {
     MsgType: 'text'
     /**
@@ -39,6 +43,8 @@ export interface TextMessage extends BaseMessage {
      */
     Content: string
 }
+
+export type ITextMessage = CamelCaseObject<TextMessage>
 
 export interface ImageMessage extends BaseMessage {
     MsgType: 'image'
@@ -52,6 +58,8 @@ export interface ImageMessage extends BaseMessage {
     MediaId: string
 }
 
+export type IImageMessage = CamelCaseObject<ImageMessage>
+
 export interface VoiceMessage extends BaseMessage {
     MsgType: 'voice'
     /**
@@ -63,6 +71,8 @@ export interface VoiceMessage extends BaseMessage {
      */
     Format: string
 }
+
+export type IVoiceMessage = CamelCaseObject<VoiceMessage>
 
 export interface VideoMessage extends BaseMessage {
     MsgType: 'video'
@@ -76,6 +86,8 @@ export interface VideoMessage extends BaseMessage {
     ThumbMediaId: string
 }
 
+export type IVideoMessage = CamelCaseObject<VideoMessage>
+
 export interface ShortvideoMessage extends BaseMessage {
     MsgType: 'shortvideo'
     /**
@@ -87,6 +99,8 @@ export interface ShortvideoMessage extends BaseMessage {
      */
     ThumbMediaId: string
 }
+
+export type IShortvideoMessage = CamelCaseObject<ShortvideoMessage>
 
 export interface LocationMessage extends BaseMessage {
     MsgType: 'location'
@@ -108,6 +122,8 @@ export interface LocationMessage extends BaseMessage {
     Label: string
 }
 
+export type ILocationMessage = CamelCaseObject<LocationMessage>
+
 export interface LinkMessage extends BaseMessage {
     MsgType: 'link'
     /**
@@ -124,4 +140,9 @@ export interface LinkMessage extends BaseMessage {
     Url: string
 }
 
+export type ILinkMessage = CamelCaseObject<LinkMessage>
+
 export type WexinMessage = TextMessage | ImageMessage | VoiceMessage | VideoMessage | ShortvideoMessage | LocationMessage | LinkMessage
+
+export type IWexinMessage = CamelCaseObject<WexinMessage>
+

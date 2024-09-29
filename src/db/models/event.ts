@@ -1,16 +1,17 @@
-import { Entity, Column } from 'typeorm'
+import { Column, ChildEntity } from 'typeorm'
 import { BaseEvent } from './base'
+import { IClickEvent, ILocationEvent, IScanEvent, ISubscribeAndScanEvent, ISubscribeEvent, IViewEvent } from '@/interfaces/wexin-event'
 
-@Entity()
-export class SubscribeEvent extends BaseEvent {
-    @Column({ type: 'varchar', length: 50, nullable: true })
-    event: 'subscribe' | 'unsubscribe'
+@ChildEntity()
+export class SubscribeEvent extends BaseEvent implements ISubscribeEvent {
+
+    declare event: 'subscribe' | 'unsubscribe'
 }
 
-@Entity()
-export class SubscribeAndScanEvent extends BaseEvent {
-    @Column({ type: 'varchar', length: 50, nullable: true })
-    event: 'subscribe'
+@ChildEntity()
+export class SubscribeAndScanEvent extends BaseEvent implements ISubscribeAndScanEvent {
+
+    declare event: 'subscribe'
 
     @Column({ type: 'varchar', length: 255, nullable: true })
     eventKey: string
@@ -19,10 +20,10 @@ export class SubscribeAndScanEvent extends BaseEvent {
     ticket: string
 }
 
-@Entity()
-export class ScanEvent extends BaseEvent {
-    @Column({ type: 'varchar', length: 50, nullable: true })
-    event: 'SCAN'
+@ChildEntity()
+export class ScanEvent extends BaseEvent implements IScanEvent {
+
+    declare event: 'SCAN'
 
     @Column({ type: 'varchar', length: 255, nullable: true })
     eventKey: string
@@ -31,10 +32,10 @@ export class ScanEvent extends BaseEvent {
     ticket: string
 }
 
-@Entity()
-export class LocationEvent extends BaseEvent {
-    @Column({ type: 'varchar', length: 50, nullable: true })
-    event: 'LOCATION'
+@ChildEntity()
+export class LocationEvent extends BaseEvent implements ILocationEvent {
+
+    declare event: 'LOCATION'
 
     @Column({ type: 'varchar', length: 255, nullable: true })
     latitude: string
@@ -46,19 +47,19 @@ export class LocationEvent extends BaseEvent {
     precision: string
 }
 
-@Entity()
-export class ClickEvent extends BaseEvent {
-    @Column({ type: 'varchar', length: 50, nullable: true })
-    event: 'CLICK'
+@ChildEntity()
+export class ClickEvent extends BaseEvent implements IClickEvent {
+
+    declare event: 'CLICK'
 
     @Column({ type: 'varchar', length: 255, nullable: true })
     eventKey: string
 }
 
-@Entity()
-export class ViewEvent extends BaseEvent {
-    @Column({ type: 'varchar', length: 50, nullable: true })
-    event: 'VIEW'
+@ChildEntity()
+export class ViewEvent extends BaseEvent implements IViewEvent {
+
+    declare event: 'VIEW'
 
     @Column({ type: 'varchar', length: 255, nullable: true })
     eventKey: string
