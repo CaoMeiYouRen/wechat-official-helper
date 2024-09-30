@@ -1,5 +1,5 @@
 import { DefaultNamingStrategy, NamingStrategyInterface } from 'typeorm'
-import { snakeCase } from 'typeorm/util/StringUtils'
+import { snakeCase } from 'lodash-es'
 
 export class SnakeCaseNamingStrategy extends DefaultNamingStrategy implements NamingStrategyInterface {
 
