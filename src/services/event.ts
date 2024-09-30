@@ -3,8 +3,8 @@ import { BaseMessage } from '@/db/models/base'
 import { ClickEvent, LocationEvent, ScanEvent, SubscribeAndScanEvent, SubscribeEvent, ViewEvent } from '@/db/models/event'
 import { ImageMessage, LinkMessage, LocationMessage, ShortVideoMessage, TextMessage, VideoMessage, VoiceMessage } from '@/db/models/message'
 import { CamelCaseObject } from '@/interfaces/utils'
-import { WexinEventBody } from '@/interfaces/wexin-event-body'
-import { WexinReplyMessage } from '@/interfaces/wexin-reply-message'
+import { WechatEventBody } from '@/interfaces/wechat-event-body'
+import { WechatReplyMessage } from '@/interfaces/wechat-reply-message'
 import { json2xml, toPascalCase } from '@/utils/helper'
 
 /**
@@ -14,7 +14,7 @@ import { json2xml, toPascalCase } from '@/utils/helper'
  * @date 2024-09-24
  * @param data
  */
-export function replyMessage(data: Partial<CamelCaseObject<WexinReplyMessage>>) {
+export function replyMessage(data: Partial<CamelCaseObject<WechatReplyMessage>>) {
     return json2xml(toPascalCase({
         createTime: Math.floor(Date.now() / 1000),
         ...data,
@@ -29,7 +29,7 @@ export function replyMessage(data: Partial<CamelCaseObject<WexinReplyMessage>>) 
  * @export
  * @param body
  */
-export async function handleEvent(body: CamelCaseObject<WexinEventBody>) {
+export async function handleEvent(body: CamelCaseObject<WechatEventBody>) {
     const { fromUserName, toUserName, msgType } = body
     // 存储用户消息到数据库
     const entityManager = (await getDataSource()).manager
@@ -122,7 +122,7 @@ export async function handleEvent(body: CamelCaseObject<WexinEventBody>) {
  * @export
  * @param body
  */
-export async function saveEvent(body: CamelCaseObject<WexinEventBody>) {
+export async function saveEvent(body: CamelCaseObject<WechatEventBody>) {
     const { msgType } = body
     const entityManager = (await getDataSource()).manager
     switch (msgType) {

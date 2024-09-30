@@ -1,6 +1,6 @@
 import { Column, ChildEntity } from 'typeorm'
 import { BaseEvent } from './base'
-import { IClickEvent, ILocationEvent, IScanEvent, ISubscribeAndScanEvent, ISubscribeEvent, IViewEvent } from '@/interfaces/wexin-event'
+import { IClickEvent, ILocationEvent, IScanEvent, ISubscribeAndScanEvent, ISubscribeEvent, IViewEvent } from '@/interfaces/wechat-event'
 
 @ChildEntity()
 export class SubscribeEvent extends BaseEvent implements ISubscribeEvent {

@@ -143,6 +143,6 @@ export interface ReplyNewsMessage extends BaseReplyMessage {
 
 export type IReplyNewsMessage = CamelCaseObject<ReplyNewsMessage>
 
-export type WexinReplyMessage = ReplyTextMessage | ReplyImageMessage | ReplyVoiceMessage | ReplyVideoMessage | ReplyMusicMessage | ReplyNewsMessage
+export type WechatReplyMessage = ReplyTextMessage | ReplyImageMessage | ReplyVoiceMessage | ReplyVideoMessage | ReplyMusicMessage | ReplyNewsMessage
 
-export type IWexinReplyMessage = CamelCaseObject<WexinReplyMessage>
+export type IWechatReplyMessage = CamelCaseObject<WechatReplyMessage>

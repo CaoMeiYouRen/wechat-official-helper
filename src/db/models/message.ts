@@ -1,6 +1,6 @@
 import { Column, ChildEntity } from 'typeorm'
 import { BaseMessage } from './base'
-import { IImageMessage, ILinkMessage, ILocationMessage, IShortVideoMessage, ITextMessage, IVideoMessage, IVoiceMessage } from '@/interfaces/wexin-message'
+import { IImageMessage, ILinkMessage, ILocationMessage, IShortVideoMessage, ITextMessage, IVideoMessage, IVoiceMessage } from '@/interfaces/wechat-message'
 
 @ChildEntity()
 export class TextMessage extends BaseMessage implements ITextMessage {

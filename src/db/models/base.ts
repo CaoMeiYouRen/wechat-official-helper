@@ -1,6 +1,6 @@
 import { PrimaryGeneratedColumn, Column, Entity, TableInheritance, ChildEntity, CreateDateColumn } from 'typeorm'
-import { IBaseMessage } from '@/interfaces/wexin-message'
-import { IBaseEvent } from '@/interfaces/wexin-event'
+import { IBaseMessage } from '@/interfaces/wechat-message'
+import { IBaseEvent } from '@/interfaces/wechat-event'
 
 @Entity()
 @TableInheritance({ column: { type: 'varchar', name: 'type' } })

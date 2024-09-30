@@ -142,7 +142,7 @@ export interface LinkMessage extends BaseMessage {
 
 export type ILinkMessage = CamelCaseObject<LinkMessage>
 
-export type WexinMessage = TextMessage | ImageMessage | VoiceMessage | VideoMessage | IShortVideoMessage | LocationMessage | LinkMessage
+export type WechatMessage = TextMessage | ImageMessage | VoiceMessage | VideoMessage | IShortVideoMessage | LocationMessage | LinkMessage
 
-export type IWexinMessage = CamelCaseObject<WexinMessage>
+export type IWechatMessage = CamelCaseObject<WechatMessage>
 

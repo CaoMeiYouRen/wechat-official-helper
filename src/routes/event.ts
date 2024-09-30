@@ -4,7 +4,7 @@ import { to } from 'await-to-js'
 import { sha1, toCamelCase, xml2json } from '@/utils/helper'
 import { WX_TOKEN } from '@/env'
 import winstonLogger from '@/utils/logger'
-import { WexinEventBody } from '@/interfaces/wexin-event-body'
+import { WechatEventBody } from '@/interfaces/wechat-event-body'
 import { handleEvent } from '@/services/event'
 // 接收微信推送事件
 const app = new Hono()
@@ -48,7 +48,7 @@ app.post('/', async (c) => {
     if (error) {
         throw new HTTPException(400, { message: `Invalid XML: \n${error.message}` })
     }
-    const body = toCamelCase(xmlData as WexinEventBody)
+    const body = toCamelCase(xmlData as WechatEventBody)
 
     winstonLogger.isDebugEnabled() && winstonLogger.debug(`Body parameters: \n${JSON.stringify(body)}`)
 

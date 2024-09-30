@@ -124,6 +124,6 @@ export interface ViewEvent extends BaseEvent {
 
 export type IViewEvent = CamelCaseObject<ViewEvent>
 
-export type WexinEvent = SubscribeEvent | SubscribeAndScanEvent | ScanEvent | LocationEvent | ClickEvent | ViewEvent
+export type WechatEvent = SubscribeEvent | SubscribeAndScanEvent | ScanEvent | LocationEvent | ClickEvent | ViewEvent
 
-export type IWexinEvent = CamelCaseObject<WexinEvent>
+export type IWechatEvent = CamelCaseObject<WechatEvent>
