@@ -9,6 +9,7 @@ import { TIMEOUT } from './env'
 import { winstonLogger } from './utils/logger'
 import eventRoute from './routes/event'
 import messageRoute from './routes/message'
+import codeRoute from './routes/code'
 import { getDataSource } from './db'
 import { auth } from './middlewares/auth'
 
@@ -59,6 +60,8 @@ app.all('/', (c) => c.json({
 app.route('/event', eventRoute)
 
 app.route('/message', messageRoute)
+
+app.route('/code', codeRoute)
 
 app.post('/synchronize', auth, async (c) => {
     const dataSource = await getDataSource()

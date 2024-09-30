@@ -1,5 +1,5 @@
 import { Column, ChildEntity } from 'typeorm'
-import { BaseMessage } from './base'
+import { BaseMessage } from './wechat-base'
 import { IImageMessage, ILinkMessage, ILocationMessage, IShortVideoMessage, ITextMessage, IVideoMessage, IVoiceMessage } from '@/interfaces/wechat-message'
 
 @ChildEntity()

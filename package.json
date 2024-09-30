@@ -98,6 +98,7 @@
   },
   "dependencies": {
     "@hono/node-server": "^1.13.1",
+    "argon2": "^0.41.1",
     "await-to-js": "^3.0.0",
     "dayjs": "^1.11.13",
     "dotenv": "^16.4.5",

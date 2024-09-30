@@ -1,5 +1,5 @@
 import { Column, ChildEntity } from 'typeorm'
-import { BaseEvent } from './base'
+import { BaseEvent } from './wechat-base'
 import { IClickEvent, ILocationEvent, IScanEvent, ISubscribeAndScanEvent, ISubscribeEvent, IViewEvent } from '@/interfaces/wechat-event'
 
 @ChildEntity()

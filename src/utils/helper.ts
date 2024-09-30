@@ -2,6 +2,7 @@ import crypto from 'crypto'
 import { camelCase, upperFirst } from 'lodash-es'
 import xml2js from 'xml2js'
 import { Equal, Like, ILike, Between, In } from 'typeorm'
+import argon2 from 'argon2'
 import { CamelCaseObject, PascalCaseObject } from '@/interfaces/utils'
 
 export function sha1(str: string) {
@@ -89,4 +90,12 @@ export function transformQueryOperator(where?: Record<string, any>) {
             return [key, value]
         }),
     )
+}
+
+export async function hashPassword(password: string) {
+    return argon2.hash(password)
+}
+
+export async function verifyPassword(hash: string, password: string) {
+    return argon2.verify(hash, password)
 }
