@@ -6,7 +6,7 @@ import { WX_TOKEN } from '@/env'
 import winstonLogger from '@/utils/logger'
 import { WexinEventBody } from '@/interfaces/wexin-event-body'
 import { handleEvent } from '@/services/event'
-
+// 接收微信推送事件
 const app = new Hono()
 
 app.get('/', async (c) => {

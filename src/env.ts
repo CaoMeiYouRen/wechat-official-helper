@@ -28,3 +28,6 @@ export const WX_APP_SECRET = process.env.WX_APP_SECRET || ''
 
 // 数据库配置
 export const DATABASE_URL = process.env.DATABASE_URL || process.env.POSTGRES_URL || ''
+
+// admin 密钥，通过 Bearer Auth 认证
+export const ADMIN_KEY = process.env.ADMIN_KEY || ''
