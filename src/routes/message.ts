@@ -18,7 +18,7 @@ app.get('/', async (c) => {
     const limit = Number(query.limit) || 10
     const page = Number(query.page) || 1
     const skip = Number(query.skip) || (page - 1) * limit
-    const { where, sort, select, relations } = query
+    const { where = {}, sort = {}, select = [], relations = [] } = query
     const entityManager = (await getDataSource()).manager
     const [data, total] = await entityManager.findAndCount(BaseMessage, {
         where: {
