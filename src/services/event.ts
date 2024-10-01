@@ -77,15 +77,8 @@ export async function handleEvent(body: IWechatEventBody) {
                     content: respContent,
                 })
             }
-            // 否则复读
-            // TODO 如果未匹配到关键词，则转发请求到下一个服务器
-            const respContent = `您发送的消息是：${content}`
-            return replyMessage({
-                toUserName: fromUserName,
-                fromUserName: toUserName,
-                msgType: 'text',
-                content: respContent,
-            })
+            // 未匹配到关键词，则转发请求到下一个服务器
+            return 'redirect'
         }
         case 'image': { // 图片消息
             const { mediaId } = body

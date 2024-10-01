@@ -34,3 +34,6 @@ export const ADMIN_KEY = process.env.ADMIN_KEY || ''
 
 // 基础路径
 export const BASE_URL = process.env.BASE_URL || `http://localhost:${PORT}`
+
+// 重定向地址
+export const REDIRECT_URL = process.env.REDIRECT_URL || ''

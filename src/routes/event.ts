@@ -2,7 +2,7 @@ import { Hono } from 'hono'
 import { HTTPException } from 'hono/http-exception'
 import { to } from 'await-to-js'
 import { sha1, toCamelCase, xml2json } from '@/utils/helper'
-import { WX_TOKEN } from '@/env'
+import { REDIRECT_URL, WX_TOKEN } from '@/env'
 import winstonLogger from '@/utils/logger'
 import { WechatEventBody } from '@/interfaces/wechat-event-body'
 import { handleEvent } from '@/services/event'
@@ -55,6 +55,15 @@ app.post('/', async (c) => {
     const response = await handleEvent(body)
 
     winstonLogger.isDebugEnabled() && winstonLogger.debug(`Response: \n${response}`)
+
+    if (response === 'redirect') { // 本云函数未处理请求，则重定向到该地址
+        if (REDIRECT_URL) {
+            const searchParams = new URLSearchParams(query)
+            return c.redirect(`${REDIRECT_URL}?${searchParams}`, 307)
+        }
+        c.header('Content-Type', 'text/xml')
+        return c.text('success', 200)
+    }
     c.header('Content-Type', 'text/xml')
     return c.text(response, 200)
 })
