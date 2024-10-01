@@ -5,13 +5,9 @@ import { cors } from 'hono/cors'
 import { secureHeaders } from 'hono/secure-headers'
 import { TIMEOUT } from './env'
 import { winstonLogger } from './utils/logger'
-import eventRoute from './routes/event'
-import messageRoute from './routes/message'
-import codeRoute from './routes/code'
-import userRoute from './routes/user'
-import authRoute from './routes/auth'
-import dbRoute from './routes/db'
+import routes from './routes'
 import { errorhandler, notFoundHandler } from './middlewares/error'
+import indexPage from './pages/index'
 
 const app = new Hono()
 
@@ -23,24 +19,11 @@ app.use(cors())
 app.use(secureHeaders())
 
 app.onError(errorhandler)
-
 app.notFound(notFoundHandler)
 
-app.all('/', (c) => c.json({
-    message: 'Hello Hono!',
-}))
-// app.route('/', indexPage)
+app.route('/', indexPage)
 
-app.route('/event', eventRoute)
-
-app.route('/auth', authRoute)
-
-app.route('/db', dbRoute)
-
-app.route('/message', messageRoute)
-
-app.route('/code', codeRoute)
-
-app.route('/user', userRoute)
+// TODO 考虑添加 /api 前缀
+app.route('/', routes)
 
 export default app
