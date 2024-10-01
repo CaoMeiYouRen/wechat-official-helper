@@ -1,6 +1,10 @@
 import { Column, Entity } from 'typeorm'
 import { Base } from './base'
 
+export type MsgType = 'text' | 'image' | 'voice' | 'video' | 'shortvideo' | 'location' | 'link' | 'event.subscribe' | 'event.unsubscribe' | 'event.scan' | 'event.location' | 'event.click' | 'event.view'
+
+export type ActionType = 'reply' | 'forward' | 'block' | 'verify' | 'login'
+
 /**
  * 规则实体类
  * 用于配置接收到用户消息时，需要执行的操作
@@ -29,6 +33,10 @@ export class Rule extends Base {
     @Column({ type: 'int', default: 0 })
     priority: number
 
+    // 响应的消息和事件类型，多选
+    @Column({ type: 'varchar', length: 50, nullable: true })
+    msgTypes: MsgType[]
+
     // 规则类型，文本或正则
     @Column({ type: 'varchar', length: 50, nullable: false })
     type: 'text' | 'regex'
@@ -39,7 +47,7 @@ export class Rule extends Base {
 
     // 规则执行的操作，回复文本/转发/屏蔽/验证码/登录链接(OAuth2)
     @Column({ type: 'varchar', length: 50, nullable: false })
-    action: 'reply' | 'forward' | 'block' | 'verify' | 'login'
+    action: ActionType
 
     // 回复内容，如果是回复，则需要填写
     @Column({ type: 'varchar', length: 1024, nullable: true })

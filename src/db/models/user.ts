@@ -46,4 +46,7 @@ export class User extends Base {
     @Column({ type: 'varchar', length: 255, nullable: true })
     wechatUnionid?: string
 
+    // 是否已订阅
+    @Column({ type: 'boolean', default: false, nullable: true })
+    subscribed: boolean
 }

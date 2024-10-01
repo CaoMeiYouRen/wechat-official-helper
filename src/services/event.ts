@@ -61,21 +61,6 @@ export async function handleEvent(body: IWechatEventBody) {
                     content: respContent,
                 })
             }
-            // if (content === '登录') {
-            //     // 直接返回一个登录链接
-            //     const verifyCode = await createVerifyCode(fromUserName, 'login')
-            //     const url = new URL(BASE_URL)
-            //     url.pathname = '/login'
-            //     url.searchParams.set('code', verifyCode.code)
-            //     const loginLink = url.toString()
-            //     const respContent = `请点击链接登录：${loginLink}`
-            //     return replyMessage({
-            //         toUserName: fromUserName,
-            //         fromUserName: toUserName,
-            //         msgType: 'text',
-            //         content: respContent,
-            //     })
-            // }
             // 未匹配到关键词，则转发请求到下一个服务器
             return 'redirect'
         }
@@ -85,18 +70,20 @@ export async function handleEvent(body: IWechatEventBody) {
         case 'event': { // 事件
             const { event } = body
             switch (event) {
-                // TODO 处理用户订阅事件
-                // case 'subscribe': { // 订阅
-                //     const respContent = '感谢订阅'
-                //     return replyMessage({
-                //         toUserName: fromUserName,
-                //         fromUserName: toUserName,
-                //         msgType: 'text',
-                //         content: respContent,
-                //     })
-                // }
-                // case 'unsubscribe': // 取消订阅
-                //     return 'success'
+                case 'subscribe': { // 订阅
+                    const userRepository = (await getDataSource()).getRepository(User)
+                    const user = await userRepository.findOneBy({ wechatOpenid: fromUserName })
+                    user.subscribed = true
+                    await userRepository.save(user)
+                    return 'redirect' // 默认为重定向
+                }
+                case 'unsubscribe': { // 取消订阅
+                    const userRepository = (await getDataSource()).getRepository(User)
+                    const user = await userRepository.findOneBy({ wechatOpenid: fromUserName })
+                    user.subscribed = false
+                    await userRepository.save(user)
+                    return 'success'
+                }
                 // case 'CLICK': // 点击菜单拉取消息时的事件推送
                 //     return 'success'
                 // case 'SCAN': // 扫描带参数二维码事件的事件推送
@@ -218,6 +205,7 @@ export async function saveUser(wechatOpenid: string) {
             emailVerified: false,
             wechatOpenid,
             wechatUnionid: null,
+            subscribed: true,
         })
         user = await userRepository.save(user)
     }
