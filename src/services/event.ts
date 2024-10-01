@@ -81,60 +81,52 @@ export async function handleEvent(body: IWechatEventBody) {
             return 'redirect'
         }
         case 'image': { // 图片消息
-            const { mediaId } = body
-            return replyMessage({
-                toUserName: fromUserName,
-                fromUserName: toUserName,
-                msgType: 'image',
-                image: {
-                    MediaId: mediaId,
-                },
-            })
+            return 'redirect'
         }
         case 'event': { // 事件
             const { event } = body
             switch (event) {
-                case 'subscribe': { // 订阅
-                    // TODO 处理用户订阅事件
-                    const respContent = '感谢订阅'
-                    return replyMessage({
-                        toUserName: fromUserName,
-                        fromUserName: toUserName,
-                        msgType: 'text',
-                        content: respContent,
-                    })
-                }
-                case 'unsubscribe': // 取消订阅
-                    return 'success'
-                case 'CLICK': // 点击菜单拉取消息时的事件推送
-                    return 'success'
-                case 'SCAN': // 扫描带参数二维码事件的事件推送
-                    return 'success'
-                case 'LOCATION': // 上报地理位置事件
-                    return 'success'
-                case 'VIEW': // 点击菜单跳转链接时的事件推送
-                    return 'success'
+                // TODO 处理用户订阅事件
+                // case 'subscribe': { // 订阅
+                //     const respContent = '感谢订阅'
+                //     return replyMessage({
+                //         toUserName: fromUserName,
+                //         fromUserName: toUserName,
+                //         msgType: 'text',
+                //         content: respContent,
+                //     })
+                // }
+                // case 'unsubscribe': // 取消订阅
+                //     return 'success'
+                // case 'CLICK': // 点击菜单拉取消息时的事件推送
+                //     return 'success'
+                // case 'SCAN': // 扫描带参数二维码事件的事件推送
+                //     return 'success'
+                // case 'LOCATION': // 上报地理位置事件
+                //     return 'success'
+                // case 'VIEW': // 点击菜单跳转链接时的事件推送
+                //     return 'success'
                 default:
-                    return 'success'
+                    return 'redirect' // 默认为重定向
             }
         }
-        case 'voice': { // 语音消息
-            return 'success'
-        }
-        case 'video': {   // 视频消息
-            return 'success'
-        }
-        case 'shortvideo': { // 小视频消息
-            return 'success'
-        }
-        case 'location': { // 位置消息
-            return 'success'
-        }
-        case 'link': { // 链接消息
-            return 'success'
-        }
+        // case 'voice': { // 语音消息
+        //     return 'success'
+        // }
+        // case 'video': {   // 视频消息
+        //     return 'success'
+        // }
+        // case 'shortvideo': { // 小视频消息
+        //     return 'success'
+        // }
+        // case 'location': { // 位置消息
+        //     return 'success'
+        // }
+        // case 'link': { // 链接消息
+        //     return 'success'
+        // }
         default:
-            return 'success'
+            return 'redirect' // 默认为重定向
     }
 }
 
