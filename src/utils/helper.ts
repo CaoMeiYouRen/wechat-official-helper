@@ -3,7 +3,10 @@ import { camelCase, upperFirst } from 'lodash-es'
 import xml2js from 'xml2js'
 import { Equal, Like, ILike, Between, In } from 'typeorm'
 import argon2 from 'argon2'
+import { sign, verify } from 'hono/jwt'
+import dayjs from 'dayjs'
 import { CamelCaseObject, PascalCaseObject } from '@/interfaces/utils'
+import { JWT_SECRET } from '@/env'
 
 export function sha1(str: string) {
     return crypto.createHash('sha1').update(str).digest('hex')
@@ -98,4 +101,34 @@ export async function hashPassword(password: string) {
 
 export async function verifyPassword(hash: string, password: string) {
     return argon2.verify(hash, password)
+}
+
+/**
+ * 获取 jwt token
+ * @author CaoMeiYouRen
+ * @date 2024-10-01
+ * @export
+ * @param payload
+ * @param [secret=JWT_SECRET]
+ */
+export async function getJwtToken(payload: any, secret = JWT_SECRET) {
+    return sign({
+        exp: Math.floor(dayjs().add(2, 'hours').valueOf() / 1000), // 两小时有效
+        nbf: Math.floor(dayjs().valueOf() / 1000), // 当前时间之前不能使用
+        iat: Math.floor(dayjs().valueOf() / 1000), // 颁发时间为当前
+        ...payload,
+    }, secret, 'HS512')
+}
+
+/**
+ * 验证 jwt token
+ *
+ * @author CaoMeiYouRen
+ * @date 2024-10-01
+ * @export
+ * @param token
+ * @param [secret=JWT_SECRET]
+ */
+export async function verifyJwtToken(token: string, secret = JWT_SECRET) {
+    return verify(token, secret, 'HS512')
 }

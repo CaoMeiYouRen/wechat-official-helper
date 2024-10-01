@@ -1,4 +1,10 @@
 import { bearerAuth } from 'hono/bearer-auth'
-import { ADMIN_KEY } from '@/env'
+import { jwt } from 'hono/jwt'
+import { ADMIN_KEY, JWT_SECRET } from '@/env'
 
-export const auth = bearerAuth({ token: ADMIN_KEY })
+export const adminAuth = bearerAuth({ token: ADMIN_KEY })
+
+export const jwtAuth = jwt({
+    secret: JWT_SECRET,
+    alg: 'HS512',
+})

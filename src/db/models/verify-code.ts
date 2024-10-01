@@ -36,4 +36,8 @@ export class VerifyCode extends Base {
     // 过期时间
     @Column({ type: Date, nullable: false })
     expiredAt: Date
+
+    // 是否已经使用
+    @Column({ type: 'boolean', default: false, nullable: true })
+    used: boolean
 }

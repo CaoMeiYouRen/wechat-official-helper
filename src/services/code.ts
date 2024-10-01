@@ -32,6 +32,7 @@ export async function createVerifyCode(wechatOpenid: string, scene: SceneType) {
     const verifyCode = new VerifyCode()
     verifyCode.scene = scene
     verifyCode.wechatOpenid = wechatOpenid
+    verifyCode.used = false
     for (let i = 0; i < 3; i++) {
         verifyCode.code = generateCode()
         // 检查生成的验证码是否重复

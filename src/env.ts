@@ -37,3 +37,6 @@ export const BASE_URL = process.env.BASE_URL || `http://localhost:${PORT}`
 
 // 重定向地址
 export const REDIRECT_URL = process.env.REDIRECT_URL || ''
+
+// jwt 密钥
+export const JWT_SECRET = process.env.JWT_SECRET || ''

@@ -57,10 +57,13 @@ app.post('/', async (c) => {
     winstonLogger.isDebugEnabled() && winstonLogger.debug(`Response: \n${response}`)
 
     if (response === 'redirect') { // 本云函数未处理请求，则重定向到该地址
+        winstonLogger.isDebugEnabled() && winstonLogger.debug('未处理请求，正在重定向中……')
         if (REDIRECT_URL) {
+            winstonLogger.isDebugEnabled() && winstonLogger.debug(`重定向请求到 ${REDIRECT_URL}`)
             const searchParams = new URLSearchParams(query)
             return c.redirect(`${REDIRECT_URL}?${searchParams}`, 307)
         }
+        winstonLogger.isDebugEnabled() && winstonLogger.debug('未设置重定向 URL，已忽略本次请求')
         c.header('Content-Type', 'text/xml')
         return c.text('success', 200)
     }

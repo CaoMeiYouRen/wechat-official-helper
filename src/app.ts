@@ -11,9 +11,8 @@ import eventRoute from './routes/event'
 import messageRoute from './routes/message'
 import codeRoute from './routes/code'
 import userRoute from './routes/user'
-import { getDataSource } from './db'
-import { auth } from './middlewares/auth'
-import indexPage from './pages/index'
+import authRoute from './routes/auth'
+import dbRoute from './routes/db'
 
 const app = new Hono()
 
@@ -62,18 +61,14 @@ app.all('/', (c) => c.json({
 
 app.route('/event', eventRoute)
 
+app.route('/auth', authRoute)
+
+app.route('/db', dbRoute)
+
 app.route('/message', messageRoute)
 
 app.route('/code', codeRoute)
 
 app.route('/user', userRoute)
-
-app.post('/synchronize', auth, async (c) => {
-    const dataSource = await getDataSource()
-    await dataSource.synchronize()
-    return c.json({
-        message: 'OK',
-    })
-})
 
 export default app

@@ -1,7 +1,7 @@
 import { Hono } from 'hono'
 import { merge, uniq } from 'lodash-es'
 import { HTTPException } from 'hono/http-exception'
-import { auth } from '@/middlewares/auth'
+import { adminAuth } from '@/middlewares/auth'
 import { getDataSource } from '@/db'
 import { User } from '@/db/models/user'
 import { CrudQuery } from '@/interfaces/crud-query'
@@ -10,7 +10,7 @@ import { transformQueryOperator } from '@/utils/helper'
 const app = new Hono()
 
 // user 接口需要 admin 权限
-app.use('/*', auth)
+app.use('/*', adminAuth)
 
 // 获取所有用户
 app.get('/', async (c) => {

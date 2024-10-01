@@ -3,14 +3,14 @@ import { HTTPException } from 'hono/http-exception'
 import { merge, uniq } from 'lodash-es'
 import { getDataSource } from '@/db'
 import { BaseMessage } from '@/db/models/wechat-base'
-import { auth } from '@/middlewares/auth'
+import { adminAuth } from '@/middlewares/auth'
 import { CrudQuery } from '@/interfaces/crud-query'
 import { transformQueryOperator } from '@/utils/helper'
 
 // message 接口需要 admin 权限
 const app = new Hono()
 
-app.use('/*', auth)
+app.use('/*', adminAuth)
 
 // 获取所有消息
 app.get('/', async (c) => {
