@@ -10,6 +10,7 @@ import { winstonLogger } from './utils/logger'
 import eventRoute from './routes/event'
 import messageRoute from './routes/message'
 import codeRoute from './routes/code'
+import userRoute from './routes/user'
 import { getDataSource } from './db'
 import { auth } from './middlewares/auth'
 
@@ -62,6 +63,8 @@ app.route('/event', eventRoute)
 app.route('/message', messageRoute)
 
 app.route('/code', codeRoute)
+
+app.route('/user', userRoute)
 
 app.post('/synchronize', auth, async (c) => {
     const dataSource = await getDataSource()

@@ -31,3 +31,6 @@ export const DATABASE_URL = process.env.DATABASE_URL || process.env.POSTGRES_URL
 
 // admin 密钥，通过 Bearer Auth 认证
 export const ADMIN_KEY = process.env.ADMIN_KEY || ''
+
+// 基础路径
+export const BASE_URL = process.env.BASE_URL || `http://localhost:${PORT}`

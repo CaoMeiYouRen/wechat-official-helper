@@ -2,6 +2,11 @@ import { Column, Entity } from 'typeorm'
 import { Base } from './base'
 
 /**
+ * 场景类型
+ */
+export type SceneType = 'login' | 'register' | 'resetPassword' | 'bindWechat' | 'unbindWechat'
+
+/**
  * 验证码实体类
  *
  * @author CaoMeiYouRen
@@ -15,6 +20,10 @@ export class VerifyCode extends Base {
     // 验证码
     @Column({ type: 'varchar', length: 50, nullable: false })
     code: string
+
+    // 场景，比如登录、注册、找回密码等
+    @Column({ type: 'varchar', length: 50, nullable: true })
+    scene: SceneType
 
     // 微信 openid，也就是 fromUserName
     @Column({ type: 'varchar', length: 255, nullable: true })

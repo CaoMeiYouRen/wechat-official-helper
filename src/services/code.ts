@@ -1,7 +1,7 @@
 import dayjs from 'dayjs'
 import { MoreThanOrEqual } from 'typeorm'
 import { getDataSource } from '@/db'
-import { VerifyCode } from '@/db/models/verify-code'
+import { SceneType, VerifyCode } from '@/db/models/verify-code'
 
 /**
  * 生成验证码
@@ -27,9 +27,10 @@ export function generateCode(length: number = 6): string {
  * @export
  * @param wechatOpenid
  */
-export async function createVerifyCode(wechatOpenid: string) {
+export async function createVerifyCode(wechatOpenid: string, scene: SceneType) {
     const repository = (await getDataSource()).getRepository(VerifyCode)
     const verifyCode = new VerifyCode()
+    verifyCode.scene = scene
     verifyCode.wechatOpenid = wechatOpenid
     for (let i = 0; i < 3; i++) {
         verifyCode.code = generateCode()

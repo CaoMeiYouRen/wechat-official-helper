@@ -7,6 +7,7 @@ import { IWechatEventBody } from '@/interfaces/wechat-event-body'
 import { IWechatReplyMessage } from '@/interfaces/wechat-reply-message'
 import { json2xml, toPascalCase } from '@/utils/helper'
 import { User } from '@/db/models/user'
+import { BASE_URL } from '@/env'
 
 /**
  * 回复消息
@@ -52,8 +53,23 @@ export async function handleEvent(body: IWechatEventBody) {
             // 如果发送的是 '验证码'，则创建新的验证码
             // TODO 验证码关键词应该可以自定义
             if (content === '验证码') {
-                const verifyCode = await createVerifyCode(fromUserName)
+                const verifyCode = await createVerifyCode(fromUserName, 'login')
                 const respContent = `您的验证码是：${verifyCode.code}`
+                return replyMessage({
+                    toUserName: fromUserName,
+                    fromUserName: toUserName,
+                    msgType: 'text',
+                    content: respContent,
+                })
+            }
+            if (content === '登录') {
+                // 直接返回一个登录链接
+                const verifyCode = await createVerifyCode(fromUserName, 'login')
+                const url = new URL(BASE_URL)
+                url.pathname = '/login'
+                url.searchParams.set('code', verifyCode.code)
+                const loginLink = url.toString()
+                const respContent = `请点击链接登录：${loginLink}`
                 return replyMessage({
                     toUserName: fromUserName,
                     fromUserName: toUserName,
@@ -63,12 +79,12 @@ export async function handleEvent(body: IWechatEventBody) {
             }
             // 否则复读
             // TODO 如果未匹配到关键词，则转发请求到下一个服务器
-            const RespContent = `您发送的消息是：${content}`
+            const respContent = `您发送的消息是：${content}`
             return replyMessage({
                 toUserName: fromUserName,
                 fromUserName: toUserName,
                 msgType: 'text',
-                content: RespContent,
+                content: respContent,
             })
         }
         case 'image': { // 图片消息
@@ -87,12 +103,12 @@ export async function handleEvent(body: IWechatEventBody) {
             switch (event) {
                 case 'subscribe': { // 订阅
                     // TODO 处理用户订阅事件
-                    const RespContent = '感谢订阅'
+                    const respContent = '感谢订阅'
                     return replyMessage({
                         toUserName: fromUserName,
                         fromUserName: toUserName,
                         msgType: 'text',
-                        content: RespContent,
+                        content: respContent,
                     })
                 }
                 case 'unsubscribe': // 取消订阅
