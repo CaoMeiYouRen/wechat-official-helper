@@ -12,6 +12,10 @@ export function sha1(str: string) {
     return crypto.createHash('sha1').update(str).digest('hex')
 }
 
+export function sha256(str: string) {
+    return crypto.createHash('sha256').update(str).digest('hex')
+}
+
 export function json2xml(obj: any) {
     const builder = new xml2js.Builder({ rootName: 'xml' })
     return builder.buildObject(obj)

@@ -7,7 +7,6 @@ import { IWechatEventBody } from '@/interfaces/wechat-event-body'
 import { IWechatReplyMessage } from '@/interfaces/wechat-reply-message'
 import { json2xml, toPascalCase } from '@/utils/helper'
 import { User } from '@/db/models/user'
-import { BASE_URL } from '@/env'
 
 /**
  * 回复消息

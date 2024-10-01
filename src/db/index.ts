@@ -5,6 +5,7 @@ import { TextMessage, ImageMessage, VoiceMessage, VideoMessage, ShortVideoMessag
 import { BaseObject, BaseEvent, BaseMessage } from './models/wechat-base'
 import { User } from './models/user'
 import { VerifyCode } from './models/verify-code'
+import { Rule } from './models/rule'
 import { __DEV__, DATABASE_URL } from '@/env'
 
 let dataSource: DataSource
@@ -34,6 +35,7 @@ export async function getDataSource() {
                 ClickEvent,
                 ViewEvent,
                 VerifyCode,
+                Rule,
             ],
             // 自动创建数据库架构
             synchronize: __DEV__,
