@@ -13,6 +13,7 @@ import codeRoute from './routes/code'
 import userRoute from './routes/user'
 import { getDataSource } from './db'
 import { auth } from './middlewares/auth'
+import indexPage from './pages/index'
 
 const app = new Hono()
 
@@ -57,6 +58,7 @@ app.notFound((c) => {
 app.all('/', (c) => c.json({
     message: 'Hello Hono!',
 }))
+// app.route('/', indexPage)
 
 app.route('/event', eventRoute)
 

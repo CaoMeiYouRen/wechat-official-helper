@@ -29,7 +29,9 @@
             "dom.iterable",
             "scripthost"
         ],
-        "skipLibCheck": true
+        "skipLibCheck": true,
+        "jsx": "react-jsx",
+        "jsxImportSource": "hono/jsx"
     },
     "include": [
         "src/*.ts",
