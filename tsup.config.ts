@@ -2,7 +2,7 @@ import { defineConfig } from 'tsup'
 
 export default defineConfig({
     platform: 'node', // 目标平台
-    entry: ['src/index.ts'], // , 'src/vercel.ts'
+    entry: ['src/index.ts', 'src/vercel.ts'], //
     format: ['esm'],
     outExtension({ format }) {
         switch (format) {
