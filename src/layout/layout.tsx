@@ -1,10 +1,14 @@
-import { FC, PropsWithChildren } from 'hono/jsx'
+import { FC, JSX, PropsWithChildren } from 'hono/jsx'
 
-export const Layout: FC<PropsWithChildren> = (props) => {
+type Props = PropsWithChildren<{
+    title?: string
+}>
+
+export const Layout: FC<Props> = (props) => {
     return (
         <html>
             <head>
-                <title>Welcome to Wechat Official Helper</title>
+                <title>{props.title}</title>
             </head>
             <body>{props.children}</body>
         </html>

@@ -8,8 +8,8 @@ const app = new Hono()
 
 const Welcome: FC = () => {
     return (
-        <Layout>
-            <h1 align="center">Hello! Hono!</h1>
+        <Layout title="Home">
+            <h1 align="center">Hello Hono!</h1>
         </Layout>
     )
 }

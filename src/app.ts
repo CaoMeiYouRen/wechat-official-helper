@@ -3,7 +3,8 @@ import { logger } from 'hono/logger'
 import { timeout } from 'hono/timeout'
 import { cors } from 'hono/cors'
 import { secureHeaders } from 'hono/secure-headers'
-import { TIMEOUT } from './env'
+import { showRoutes } from 'hono/dev'
+import { __DEV__, TIMEOUT } from './env'
 import { winstonLogger } from './utils/logger'
 import routes from './routes'
 import { errorhandler, notFoundHandler } from './middlewares/error'
@@ -22,8 +23,10 @@ app.onError(errorhandler)
 app.notFound(notFoundHandler)
 
 app.route('/', indexPage)
-
-// TODO 考虑添加 /api 前缀
 app.route('/', routes)
+
+__DEV__ && showRoutes(app, {
+    verbose: true,
+})
 
 export default app
