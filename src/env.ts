@@ -43,3 +43,6 @@ export const OAUTH_REDIRECT_URL = process.env.OAUTH_REDIRECT_URL || ''
 
 // jwt 密钥
 export const JWT_SECRET = process.env.JWT_SECRET || ''
+
+// 二维码地址
+export const QRCODE_URL = process.env.QRCODE_URL || ''

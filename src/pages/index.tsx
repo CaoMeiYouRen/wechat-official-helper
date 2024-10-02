@@ -10,12 +10,28 @@ const app = new Hono()
 
 type Props = {
     name: string
+    id: number
 }
 const Welcome: FC<Props> = (props) => {
+    const { name, id } = props
+    const isLogin = !!id
+
     return (
         <Layout title="主页">
-            <div className="flex items-start justify-center min-h-screen bg-gray-100">
-                <h1 className="text-4xl font-bold text-center text-gray-800 mt-16">Hello {props.name}!</h1>
+            <div className="flex flex-col items-center justify-start min-h-screen bg-gray-100 pt-16">
+                <div className="text-center">
+                    <h1 className="text-5xl font-extrabold text-gray-800 mt-4">Hello {name}!</h1>
+                    <p className="mt-2 text-lg text-gray-600">欢迎来到 Hono 主页</p>
+                </div>
+                {isLogin ?
+                    <div className="mt-6 text-center text-green-600 font-semibold text-lg">您已登录</div>
+                    :
+                    <a href="/oauth" className="mt-6 w-full max-w-sm">
+                        <button type="button" className="w-full flex justify-center py-3 px-6 border border-transparent rounded-lg shadow-lg text-base font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                            登录
+                        </button>
+                    </a>
+                }
             </div>
         </Layout>
     )
@@ -23,12 +39,13 @@ const Welcome: FC<Props> = (props) => {
 
 app.all('/', async (c) => {
     let name = 'Hono'
+    let id = 0
     const token = c.req.query('token') // 如果有 jwt token，则验证是否有效，如果有效，则查询对应的用户信息
     try {
         if (token) {
-            winstonLogger.isDebugEnabled() && winstonLogger.debug('token: ', token)
+            winstonLogger.isDebugEnabled() && winstonLogger.debug(`token: ${token}`)
             const payload = await verifyJwtToken(token)
-            const id = payload.id as number
+            id = payload.id as number
             const userRepository = (await getDataSource()).getRepository(User)
             const user = await userRepository.findOneBy({ id })
             name = user?.username || 'Hono'
@@ -42,7 +59,7 @@ app.all('/', async (c) => {
     if (accept.includes('text/html')) {
         c.header('Content-Type', 'text/html')
         return c.html(
-            <Welcome name={name} />,
+            <Welcome name={name} id={id} />,
         )
     }
     // 如果是 xml，则返回xml
