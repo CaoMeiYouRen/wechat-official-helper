@@ -31,4 +31,8 @@ __DEV__ && showRoutes(app, {
     verbose: true,
 })
 
+// if (__DEV__) {
+//     console.log(env)
+// }
+
 export default app

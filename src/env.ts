@@ -1,4 +1,6 @@
+import { env } from 'process'
 import dotenv from 'dotenv'
+
 const result = dotenv.config({
     path: [
         '.env.local',
@@ -9,6 +11,12 @@ const envObj = result.parsed
 
 if (process.env.NODE_ENV === 'development') {
     console.log('envObj', envObj)
+    // 开发模式下以本地环境变量为准
+    if (Object.keys(envObj).length > 0) {
+        Object.keys(envObj).forEach((key) => {
+            env[key] = envObj[key]
+        })
+    }
 }
 
 export const __PROD__ = process.env.NODE_ENV === 'production'

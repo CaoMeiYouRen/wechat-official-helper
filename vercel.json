@@ -10,7 +10,7 @@
         }
     ],
     "functions": {
-        "api/*.js": {
+        "api/*.ts": {
             "memory": 1024,
             "maxDuration": 60
         }
