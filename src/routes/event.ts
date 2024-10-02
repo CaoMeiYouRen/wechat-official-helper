@@ -33,7 +33,7 @@ app.post('/', async (c) => {
     const { signature, timestamp, nonce } = query
     // 记录日志
     winstonLogger.isDebugEnabled() && winstonLogger.debug(`Query parameters: \n${JSON.stringify(query)}`)
-    console.log('WX_TOKEN', WX_TOKEN)
+
     // 签名校验
     const tempArr = [WX_TOKEN, timestamp, nonce].sort()
     const tempStr = tempArr.join('')
