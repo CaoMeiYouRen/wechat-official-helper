@@ -7,6 +7,7 @@ import { User } from '@/db/models/user'
 import { getJwtToken, verifyPassword } from '@/utils/helper'
 import { VerifyCode } from '@/db/models/verify-code'
 import { jwtAuth } from '@/middlewares/auth'
+import { OAUTH_REDIRECT_URL } from '@/env'
 
 const app = new Hono()
 
@@ -53,6 +54,25 @@ app.post('/loginByCode', async (c) => {
         message: '验证码正确',
         data: token,
     })
+})
+
+// 登录通过后，回调 OAUTH_REDIRECT_URL
+app.post('/loginByOAuth', async (c) => {
+    const { code, scene } = await c.req.parseBody() as Record<string, any>
+    const verifyCodeRepository = (await getDataSource()).getRepository(VerifyCode)
+    const verifyCode = await verifyCodeRepository.findOneBy({ code, scene, used: false, expiredAt: MoreThanOrEqual(dayjs().add(-5, 'minutes').toDate()) })
+    if (code !== verifyCode?.code) {
+        throw new HTTPException(400, { message: '验证码错误' })
+    }
+    verifyCode.used = true
+    await verifyCodeRepository.save(verifyCode)
+    // 查找用户信息
+    const wechatOpenid = verifyCode.wechatOpenid
+    const userRepository = (await getDataSource()).getRepository(User)
+    const user = await userRepository.findOneBy({ wechatOpenid })
+    const token = await getJwtToken({ id: user.id })
+    const redirectUrl = `${OAUTH_REDIRECT_URL}?token=${token}`
+    return c.redirect(redirectUrl, 302)
 })
 
 // 使用 jwt token 获取用户信息
