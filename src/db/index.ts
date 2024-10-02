@@ -6,7 +6,7 @@ import { BaseObject, BaseEvent, BaseMessage } from './models/wechat-base'
 import { User } from './models/user'
 import { VerifyCode } from './models/verify-code'
 import { Rule } from './models/rule'
-import { __DEV__, DATABASE_URL } from '@/env'
+import { __DEV__, DATABASE_URL, TIMEOUT } from '@/env'
 
 let dataSource: DataSource
 
@@ -46,6 +46,8 @@ export async function getDataSource() {
             // 解析 int8 到 number
             parseInt8: true,
             logger: __DEV__ ? 'debug' : 'simple-console',
+            connectTimeoutMS: Math.min(30000, TIMEOUT), // 连接超时时间 30 秒
+            useUTC: true, // 时间使用 UTC 时间
         })
         await dataSource.initialize()
     }

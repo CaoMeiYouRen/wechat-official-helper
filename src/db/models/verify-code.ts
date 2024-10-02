@@ -34,7 +34,7 @@ export class VerifyCode extends Base {
     // wechatUnionid?: string
 
     // 过期时间
-    @Column({ type: Date, nullable: false })
+    @Column({ type: 'timestamptz', nullable: true })
     expiredAt: Date
 
     // 是否已经使用

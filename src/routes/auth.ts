@@ -37,7 +37,7 @@ app.post('/login', async (c) => {
 
 // 第三方登录时，请求该接口校验验证码是否有效
 app.post('/loginByCode', async (c) => {
-    const { code, scene } = await c.req.json()
+    const { code, scene = 'login' } = await c.req.json()
     const verifyCodeRepository = (await getDataSource()).getRepository(VerifyCode)
     const verifyCode = await verifyCodeRepository.findOneBy({ code, scene, used: false, expiredAt: MoreThanOrEqual(dayjs().add(-5, 'minutes').toDate()) })
     if (code !== verifyCode?.code) {
@@ -58,7 +58,15 @@ app.post('/loginByCode', async (c) => {
 
 // 登录通过后，回调 OAUTH_REDIRECT_URL
 app.post('/loginByOAuth', async (c) => {
-    const { code, scene } = await c.req.parseBody() as Record<string, any>
+    // 判断请求类型
+    let body = {} as Record<string, any>
+    const contentType = c.req.header('Content-Type')
+    if (contentType === 'application/x-www-form-urlencoded') {
+        body = await c.req.parseBody() as Record<string, any>
+    } else if (contentType === 'application/json') {
+        body = await c.req.json()
+    }
+    const { code, scene = 'login' } = body
     const verifyCodeRepository = (await getDataSource()).getRepository(VerifyCode)
     const verifyCode = await verifyCodeRepository.findOneBy({ code, scene, used: false, expiredAt: MoreThanOrEqual(dayjs().add(-5, 'minutes').toDate()) })
     if (code !== verifyCode?.code) {
