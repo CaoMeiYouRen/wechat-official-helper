@@ -2,7 +2,7 @@ import { Logger, QueryRunner } from 'typeorm'
 import winston from 'winston'
 
 function parametersFormat(parameters: any[]) {
-    if (!parameters.length) {
+    if (!parameters?.length) {
         return ''
     }
     return `\n${parameters.map((parameter) => {
