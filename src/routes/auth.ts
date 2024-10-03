@@ -8,13 +8,16 @@ import { getJwtToken, verifyPassword } from '@/utils/helper'
 import { VerifyCode } from '@/db/models/verify-code'
 import { jwtAuth } from '@/middlewares/auth'
 import { OAUTH_REDIRECT_URL } from '@/env'
+import winstonLogger from '@/utils/logger'
 
 const app = new Hono()
 
 // 账号密码登录
 app.post('/login', async (c) => {
     const { username, password } = await c.req.json()
+    winstonLogger.isDebugEnabled() && winstonLogger.debug(`username: ${username}`)
     const repository = (await getDataSource()).getRepository(User)
+    winstonLogger.isDebugEnabled() && winstonLogger.debug(`repository: ${repository.metadata.tableName}`)
     const user = await repository
         .createQueryBuilder('user')
         .where({
@@ -22,6 +25,7 @@ app.post('/login', async (c) => {
         })
         .addSelect('user.password')
         .getOne()
+    winstonLogger.isDebugEnabled() && winstonLogger.debug(`user.id: ${user.id}`)
     if (!user) {
         throw new HTTPException(400, { message: '用户名或密码错误！' })
     }
@@ -37,7 +41,8 @@ app.post('/login', async (c) => {
 
 // 第三方登录时，请求该接口校验验证码是否有效
 app.post('/loginByCode', async (c) => {
-    const { code, scene = 'login' } = await c.req.json()
+    const { code } = await c.req.json()
+    const scene = 'login'
     const verifyCodeRepository = (await getDataSource()).getRepository(VerifyCode)
     const verifyCode = await verifyCodeRepository.findOneBy({ code, scene, used: false, expiredAt: MoreThanOrEqual(dayjs().add(-5, 'minutes').toDate()) })
     if (code !== verifyCode?.code) {
@@ -66,7 +71,8 @@ app.post('/loginByOAuth', async (c) => {
     } else if (contentType === 'application/json') {
         body = await c.req.json()
     }
-    const { code, scene = 'login' } = body
+    const { code } = body
+    const scene = 'login'
     const verifyCodeRepository = (await getDataSource()).getRepository(VerifyCode)
     const verifyCode = await verifyCodeRepository.findOneBy({ code, scene, used: false, expiredAt: MoreThanOrEqual(dayjs().add(-5, 'minutes').toDate()) })
     if (code !== verifyCode?.code) {

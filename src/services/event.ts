@@ -82,7 +82,7 @@ export async function handleEvent(body: IWechatEventBody) {
                     const user = await userRepository.findOneBy({ wechatOpenid: fromUserName })
                     user.subscribed = false
                     await userRepository.save(user)
-                    return 'success'
+                    return 'redirect'
                 }
                 // case 'CLICK': // 点击菜单拉取消息时的事件推送
                 //     return 'success'

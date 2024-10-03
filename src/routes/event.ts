@@ -38,7 +38,7 @@ app.post('/', async (c) => {
     const tempArr = [WX_TOKEN, timestamp, nonce].sort()
     const tempStr = tempArr.join('')
     const tempSign = sha1(tempStr)
-
+    // winstonLogger.isDebugEnabled() && winstonLogger.debug(`tempStr: ${tempStr}, tempSign: ${tempSign}, signature: ${signature}`)
     if (tempSign !== signature) {
         throw new HTTPException(400, { message: '微信签名校验失败！' })
     }

@@ -1,5 +1,6 @@
 import { env } from 'process'
 import dotenv from 'dotenv'
+import { getRuntimeKey } from 'hono/adapter'
 
 const result = dotenv.config({
     path: [
@@ -12,17 +13,21 @@ const envObj = result.parsed
 if (process.env.NODE_ENV === 'development') {
     console.log('envObj', envObj)
     // 开发模式下以本地环境变量为准
-    if (Object.keys(envObj).length > 0) {
-        Object.keys(envObj).forEach((key) => {
-            env[key] = envObj[key]
-        })
-    }
+    // if (getRuntimeKey() === 'edge-light') { // Vercel Edge Functions 模式下以本地环境变量为准
+    //     if (Object.keys(envObj).length > 0) {
+    //         Object.keys(envObj).forEach((key) => {
+    //             env[key] = envObj[key]
+    //         })
+    //     }
+    // }
 }
 
 export const __PROD__ = process.env.NODE_ENV === 'production'
 export const __DEV__ = process.env.NODE_ENV === 'development'
 
 export const PORT = parseInt(process.env.PORT) || 3000
+
+export const LOG_LEVEL = process.env.LOG_LEVEL || (__DEV__ ? 'silly' : 'http')
 
 // 是否写入日志到文件
 export const LOGFILES = process.env.LOGFILES === 'true'

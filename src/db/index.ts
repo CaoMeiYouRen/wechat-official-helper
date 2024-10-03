@@ -6,7 +6,9 @@ import { BaseObject, BaseEvent, BaseMessage } from './models/wechat-base'
 import { User } from './models/user'
 import { VerifyCode } from './models/verify-code'
 import { Rule } from './models/rule'
+import { CustomLogger } from './logger'
 import { __DEV__, DATABASE_URL, TIMEOUT } from '@/env'
+import winstonLogger from '@/utils/logger'
 
 let dataSource: DataSource
 
@@ -45,10 +47,13 @@ export async function getDataSource() {
             namingStrategy: new SnakeCaseNamingStrategy(),
             // 解析 int8 到 number
             parseInt8: true,
-            logger: __DEV__ ? 'debug' : 'simple-console',
+            logger: new CustomLogger(winstonLogger), // __DEV__ ? 'debug' : 'simple-console',
             connectTimeoutMS: Math.min(30000, TIMEOUT), // 连接超时时间 30 秒
-            useUTC: true, // 时间使用 UTC 时间
+            // useUTC: true, // 时间使用 UTC 时间
         })
+        await dataSource.initialize()
+    }
+    if (!dataSource.isInitialized) {
         await dataSource.initialize()
     }
     return dataSource
