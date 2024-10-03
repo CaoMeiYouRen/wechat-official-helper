@@ -15,9 +15,7 @@ const app = new Hono()
 // 账号密码登录
 app.post('/login', async (c) => {
     const { username, password } = await c.req.json()
-    winstonLogger.isDebugEnabled() && winstonLogger.debug(`username: ${username}`)
     const repository = (await getDataSource()).getRepository(User)
-    winstonLogger.isDebugEnabled() && winstonLogger.debug(`repository: ${repository.metadata.tableName}`)
     const user = await repository
         .createQueryBuilder('user')
         .where({
@@ -25,7 +23,6 @@ app.post('/login', async (c) => {
         })
         .addSelect('user.password')
         .getOne()
-    winstonLogger.isDebugEnabled() && winstonLogger.debug(`user.id: ${user.id}`)
     if (!user) {
         throw new HTTPException(400, { message: '用户名或密码错误！' })
     }
