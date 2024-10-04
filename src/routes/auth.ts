@@ -8,7 +8,6 @@ import { getJwtToken, verifyPassword } from '@/utils/helper'
 import { VerifyCode } from '@/db/models/verify-code'
 import { jwtAuth } from '@/middlewares/auth'
 import { OAUTH_REDIRECT_URL } from '@/env'
-import winstonLogger from '@/utils/logger'
 
 const app = new Hono()
 

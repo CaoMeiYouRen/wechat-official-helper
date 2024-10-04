@@ -1,6 +1,4 @@
-import { env } from 'process'
 import dotenv from 'dotenv'
-import { getRuntimeKey } from 'hono/adapter'
 
 const result = dotenv.config({
     path: [

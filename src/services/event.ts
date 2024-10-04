@@ -1,6 +1,6 @@
 import { createVerifyCode, generateCode } from './code'
 import { getDataSource } from '@/db'
-import { BaseMessage } from '@/db/models/wechat-base'
+import { BaseEvent, BaseMessage } from '@/db/models/wechat-base'
 import { ClickEvent, LocationEvent, ScanEvent, SubscribeAndScanEvent, SubscribeEvent, ViewEvent } from '@/db/models/event'
 import { ImageMessage, LinkMessage, LocationMessage, ShortVideoMessage, TextMessage, VideoMessage, VoiceMessage } from '@/db/models/message'
 import { IWechatEventBody } from '@/interfaces/wechat-event-body'
@@ -31,18 +31,23 @@ export function replyMessage(data: Partial<IWechatReplyMessage>) {
  * @param body
  */
 export async function handleEvent(body: IWechatEventBody) {
-    const { fromUserName, toUserName, msgType } = body
+    const { fromUserName, toUserName, msgType, createTime } = body
     // 存储用户消息到数据库
     const entityManager = (await getDataSource()).manager
-    // 如果是消息，则根据 msgId 去重复
-    if (body.msgType !== 'event') {
-        // 根据 msgId 去重复
-        const exist = await entityManager.findOneBy(BaseMessage, { msgId: body.msgId })
+    // 如果是事件，则根据 fromUserName + createTime 排重
+    if (body.msgType === 'event') {
+        const exist = await entityManager.findOneBy(BaseEvent, { fromUserName, createTime })
         if (exist) {
             return 'success'
         }
+    } else {
+        // 如果是消息，则根据 msgId 去重复
+        // TODO 修复 当响应超过5秒，微信服务器重试时，应当发送之前未发送的消息
+        // const exist = await entityManager.findOneBy(BaseMessage, { msgId: body.msgId })
+        // if (exist) {
+        //     return 'success'
+        // }
     }
-    // 如果是事件，则不处理重复
 
     await saveEvent(body)
 
@@ -54,6 +59,15 @@ export async function handleEvent(body: IWechatEventBody) {
             if (content === '验证码') {
                 const verifyCode = await createVerifyCode(fromUserName, 'login')
                 const respContent = `您的验证码是：${verifyCode.code}`
+                return replyMessage({
+                    toUserName: fromUserName,
+                    fromUserName: toUserName,
+                    msgType: 'text',
+                    content: respContent,
+                })
+            }
+            if (/^查询ID$/i.test(content)) {
+                const respContent = `您的 ID 是：${fromUserName}`
                 return replyMessage({
                     toUserName: fromUserName,
                     fromUserName: toUserName,
