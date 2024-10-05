@@ -81,6 +81,7 @@ app.post('/loginByOAuth', async (c) => {
     const userRepository = (await getDataSource()).getRepository(User)
     const user = await userRepository.findOneBy({ wechatOpenid })
     const token = await getJwtToken({ id: user.id })
+    // TODO token 不应该直接发给前端
     const redirectUrl = `${OAUTH_REDIRECT_URL}?token=${token}`
     return c.redirect(redirectUrl, 302)
 })
