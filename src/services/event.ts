@@ -31,26 +31,13 @@ export function replyMessage(data: Partial<IWechatReplyMessage>) {
  * @param body
  */
 export async function handleEvent(body: IWechatEventBody) {
-    const { fromUserName, toUserName, msgType, createTime } = body
+    const { fromUserName, toUserName, msgType } = body
     // 存储用户消息到数据库
     const entityManager = (await getDataSource()).manager
-    // 如果是事件，则根据 fromUserName + createTime 排重
-    if (body.msgType === 'event') {
-        const exist = await entityManager.findOneBy(BaseEvent, { fromUserName, createTime })
-        if (exist) {
-            return 'success'
-        }
-    } else {
-        // 如果是消息，则根据 msgId 去重复
-        // TODO 修复 当响应超过5秒，微信服务器重试时，应当发送之前未发送的消息
-        // const exist = await entityManager.findOneBy(BaseMessage, { msgId: body.msgId })
-        // if (exist) {
-        //     return 'success'
-        // }
+    const message = await saveEvent(body)
+    if (message.responded) { // 如果已经响应了，则直接返回
+        return 'success'
     }
-
-    await saveEvent(body)
-
     switch (msgType) {
         case 'text': { // 文本消息
             const { content } = body
@@ -59,6 +46,8 @@ export async function handleEvent(body: IWechatEventBody) {
             if (content === '验证码') {
                 const verifyCode = await createVerifyCode(fromUserName, 'login')
                 const respContent = `您的验证码是：${verifyCode.code}`
+                message.responded = true // 标记已响应
+                await entityManager.save(message)
                 return replyMessage({
                     toUserName: fromUserName,
                     fromUserName: toUserName,
@@ -68,6 +57,8 @@ export async function handleEvent(body: IWechatEventBody) {
             }
             if (/^查询ID$/i.test(content)) {
                 const respContent = `您的 ID 是：${fromUserName}`
+                message.responded = true // 标记已响应
+                await entityManager.save(message)
                 return replyMessage({
                     toUserName: fromUserName,
                     fromUserName: toUserName,
@@ -139,69 +130,88 @@ export async function handleEvent(body: IWechatEventBody) {
  * @param body
  */
 export async function saveEvent(body: IWechatEventBody) {
-    const { msgType, fromUserName } = body
+    const { msgType, fromUserName, createTime } = body
     const entityManager = (await getDataSource()).manager
     // 保存用户信息
     await saveUser(fromUserName)
 
+    if (body.msgType === 'event') {
+        // 如果是事件，则根据 fromUserName + createTime 去重复
+        const exist = await entityManager.findOneBy(BaseEvent, { fromUserName, createTime })
+        if (exist) {
+            return exist
+        }
+    } else {
+        // 如果是消息，则根据 msgId 去重复
+        const exist = await entityManager.findOneBy(BaseMessage, { msgId: body.msgId })
+        if (exist) {
+            return exist
+        }
+    }
+    // 保存信息
     switch (msgType) {
         case 'text': { // 文本消息
-            await entityManager.save(entityManager.create(TextMessage, body))
-            return
+            const message = await entityManager.save(entityManager.create(TextMessage, body))
+            return message
         }
         case 'image': { // 图片消息
-            await entityManager.save(entityManager.create(ImageMessage, body))
-            return
+            const message = await entityManager.save(entityManager.create(ImageMessage, body))
+            return message
         }
         case 'event': { // 事件
             const { event } = body
             switch (event) {
                 case 'subscribe': { // 订阅
                     if ((body as SubscribeAndScanEvent).eventKey) {
-                        await entityManager.save(entityManager.create(SubscribeAndScanEvent, body as SubscribeAndScanEvent))
-                        return
+                        const message = await entityManager.save(entityManager.create(SubscribeAndScanEvent, body as SubscribeAndScanEvent))
+                        return message
                     }
-                    await entityManager.save(entityManager.create(SubscribeEvent, body))
-                    return
+                    const message = await entityManager.save(entityManager.create(SubscribeEvent, body))
+                    return message
                 }
-                case 'unsubscribe': // 取消订阅
-                    await entityManager.save(entityManager.create(SubscribeEvent, body))
-                    return
-                case 'CLICK': // 点击菜单拉取消息时的事件推送
-                    await entityManager.save(entityManager.create(ClickEvent, body))
-                    return
-                case 'SCAN': // 扫描带参数二维码事件的事件推送
-                    await entityManager.save(entityManager.create(ScanEvent, body))
-                    return
-                case 'LOCATION': // 上报地理位置事件
-                    await entityManager.save(entityManager.create(LocationEvent, body))
-                    return
-                case 'VIEW': // 点击菜单跳转链接时的事件推送
-                    await entityManager.save(entityManager.create(ViewEvent, body))
-                    return
+                case 'unsubscribe': { // 取消订阅
+                    const message = await entityManager.save(entityManager.create(SubscribeEvent, body))
+                    return message
+                }
+                case 'CLICK': { // 点击菜单拉取消息时的事件推送
+                    const message = await entityManager.save(entityManager.create(ClickEvent, body))
+                    return message
+                }
+                case 'SCAN': { // 扫描带参数二维码事件的事件推送
+                    const message = await entityManager.save(entityManager.create(ScanEvent, body))
+                    return message
+                }
+                case 'LOCATION': { // 上报地理位置事件
+                    const message = await entityManager.save(entityManager.create(LocationEvent, body))
+                    return message
+                }
+                case 'VIEW': { // 点击菜单跳转链接时的事件推送
+                    const message = await entityManager.save(entityManager.create(ViewEvent, body))
+                    return message
+                }
                 default:
-                    return
+                    return null
             }
         }
         case 'voice': { // 语音消息
-            await entityManager.save(entityManager.create(VoiceMessage, body))
-            return
+            const message = await entityManager.save(entityManager.create(VoiceMessage, body))
+            return message
         }
         case 'video': {   // 视频消息
-            await entityManager.save(entityManager.create(VideoMessage, body))
-            return
+            const message = await entityManager.save(entityManager.create(VideoMessage, body))
+            return message
         }
         case 'shortvideo': { // 小视频消息
-            await entityManager.save(entityManager.create(ShortVideoMessage, body))
-            return
+            const message = await entityManager.save(entityManager.create(ShortVideoMessage, body))
+            return message
         }
         case 'location': { // 位置消息
-            await entityManager.save(entityManager.create(LocationMessage, body))
-            return
+            const message = await entityManager.save(entityManager.create(LocationMessage, body))
+            return message
         }
         case 'link': { // 链接消息
-            await entityManager.save(entityManager.create(LinkMessage, body))
-            return
+            const message = await entityManager.save(entityManager.create(LinkMessage, body))
+            return message
         }
         default:
             return null

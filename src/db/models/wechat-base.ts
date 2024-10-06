@@ -17,6 +17,10 @@ export class BaseObject extends Base {
 
     @Column({ type: 'varchar', length: 20, nullable: false })
     createTime: string
+
+    // 是否已响应该事件/消息
+    @Column({ type: 'boolean', default: false, nullable: true })
+    responded: boolean
 }
 
 @ChildEntity()
