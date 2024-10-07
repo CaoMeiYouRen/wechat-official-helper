@@ -59,14 +59,14 @@ app.post('/loginByCode', async (c) => {
 // 登录通过后，回调 OAUTH_REDIRECT_URL
 app.post('/loginByOAuth', async (c) => {
     // 判断请求类型
-    let body = {} as Record<string, any>
+    let body = {} as Record<string, string>
     const contentType = c.req.header('Content-Type')
     if (contentType === 'application/x-www-form-urlencoded') {
-        body = await c.req.parseBody() as Record<string, any>
+        body = await c.req.parseBody() as Record<string, string>
     } else if (contentType === 'application/json') {
         body = await c.req.json()
     }
-    const { code, state } = body
+    const { code, state, redirectUri } = body
     const scene = 'login'
     const verifyCodeRepository = (await getDataSource()).getRepository(VerifyCode)
     const verifyCode = await verifyCodeRepository.findOne({ where: { code, scene, used: false, expiredAt: MoreThanOrEqual(dayjs().add(-5, 'minutes').toDate()) }, relations: ['user'] })
@@ -83,7 +83,11 @@ app.post('/loginByOAuth', async (c) => {
         accessCode: accessCode.code,
         state,
     })
-    const url = new URL(OAUTH_REDIRECT_URL)
+    if (!OAUTH_REDIRECT_URL) {
+        throw new HTTPException(400, { message: 'OAUTH_REDIRECT_URL 未配置' })
+    }
+    // 如果 redirectUri 是 OAUTH_REDIRECT_URL 的子域名，就使用 redirectUri，否则使用 OAUTH_REDIRECT_URL
+    const url = redirectUri?.startsWith(OAUTH_REDIRECT_URL) ? new URL(redirectUri) : new URL(OAUTH_REDIRECT_URL)
     url.search = query.toString()
     const redirectUrl = url.toString()
     return c.redirect(redirectUrl, 302)
