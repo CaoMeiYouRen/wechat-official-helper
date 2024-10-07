@@ -1,10 +1,10 @@
 import { Column, Entity } from 'typeorm'
-import { Base } from './base'
+import { AclBase } from './base'
 
 /**
  * 场景类型
  */
-export type SceneType = 'login' | 'register' | 'resetPassword' | 'bindWechat' | 'unbindWechat'
+export type SceneType = 'login' | 'register' | 'resetPassword' | 'bindWechat' | 'unbindWechat' | 'access-code'
 
 /**
  * 验证码实体类
@@ -15,7 +15,7 @@ export type SceneType = 'login' | 'register' | 'resetPassword' | 'bindWechat' | 
  * @class VerifyCode
  */
 @Entity()
-export class VerifyCode extends Base {
+export class VerifyCode extends AclBase {
 
     // 验证码
     @Column({ type: 'varchar', length: 50, nullable: false })
@@ -26,12 +26,8 @@ export class VerifyCode extends Base {
     scene: SceneType
 
     // 微信 openid，也就是 fromUserName
-    @Column({ type: 'varchar', length: 255, nullable: true })
-    wechatOpenid: string
-
-    // 微信 unionid，如果绑定到微信开放平台帐号下会返回，没有就为 null
     // @Column({ type: 'varchar', length: 255, nullable: true })
-    // wechatUnionid?: string
+    // wechatOpenid: string
 
     // 过期时间
     @Column({ type: 'timestamptz', nullable: true })

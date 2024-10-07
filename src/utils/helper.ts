@@ -136,3 +136,36 @@ export async function getJwtToken(payload: any, secret = JWT_SECRET) {
 export async function verifyJwtToken(token: string, secret = JWT_SECRET) {
     return verify(token, secret, 'HS512')
 }
+
+/**
+ * 生成随机数字验证码
+ *
+ * @author CaoMeiYouRen
+ * @date 2024-10-01
+ * @export
+ * @param [length=6] {number} 验证码长度
+ */
+export function generateCode(length: number = 6): string {
+    let code = ''
+    for (let i = 0; i < length; i++) {
+        code += Math.floor(Math.random() * 10)
+    }
+    return code
+}
+
+/**
+ * 生成随机字符
+ *
+ * @author CaoMeiYouRen
+ * @date 2024-10-07
+ * @export
+ * @param length
+ */
+export function generateRandomString(length: number = 32): string {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+    let result = ''
+    for (let i = 0; i < length; i++) {
+        result += characters.charAt(Math.floor(Math.random() * characters.length))
+    }
+    return result
+}

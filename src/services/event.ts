@@ -1,11 +1,11 @@
-import { createVerifyCode, generateCode } from './code'
+import { createVerifyCode } from './code'
 import { getDataSource } from '@/db'
 import { BaseEvent, BaseMessage } from '@/db/models/wechat-base'
 import { ClickEvent, LocationEvent, ScanEvent, SubscribeAndScanEvent, SubscribeEvent, ViewEvent } from '@/db/models/event'
 import { ImageMessage, LinkMessage, LocationMessage, ShortVideoMessage, TextMessage, VideoMessage, VoiceMessage } from '@/db/models/message'
 import { IWechatEventBody } from '@/interfaces/wechat-event-body'
 import { IWechatReplyMessage } from '@/interfaces/wechat-reply-message'
-import { json2xml, toPascalCase } from '@/utils/helper'
+import { generateRandomString, json2xml, toPascalCase } from '@/utils/helper'
 import { User } from '@/db/models/user'
 
 /**
@@ -38,13 +38,16 @@ export async function handleEvent(body: IWechatEventBody) {
     if (message.responded) { // 如果已经响应了，则直接返回
         return 'success'
     }
+    // 保存用户信息
+    const userRepository = (await getDataSource()).getRepository(User)
+    const user = await saveUser(fromUserName)
     switch (msgType) {
         case 'text': { // 文本消息
             const { content } = body
             // 如果发送的是 '验证码'，则创建新的验证码
             // TODO 验证码关键词应该可以自定义
             if (content === '验证码') {
-                const verifyCode = await createVerifyCode(fromUserName, 'login')
+                const verifyCode = await createVerifyCode(user, 'login')
                 const respContent = `您的验证码是：${verifyCode.code}`
                 message.responded = true // 标记已响应
                 await entityManager.save(message)
@@ -76,15 +79,11 @@ export async function handleEvent(body: IWechatEventBody) {
             const { event } = body
             switch (event) {
                 case 'subscribe': { // 订阅
-                    const userRepository = (await getDataSource()).getRepository(User)
-                    const user = await userRepository.findOneBy({ wechatOpenid: fromUserName })
                     user.subscribed = true
                     await userRepository.save(user)
                     return 'redirect' // 默认为重定向
                 }
                 case 'unsubscribe': { // 取消订阅
-                    const userRepository = (await getDataSource()).getRepository(User)
-                    const user = await userRepository.findOneBy({ wechatOpenid: fromUserName })
                     user.subscribed = false
                     await userRepository.save(user)
                     return 'redirect'
@@ -132,8 +131,6 @@ export async function handleEvent(body: IWechatEventBody) {
 export async function saveEvent(body: IWechatEventBody) {
     const { msgType, fromUserName, createTime } = body
     const entityManager = (await getDataSource()).manager
-    // 保存用户信息
-    await saveUser(fromUserName)
 
     if (body.msgType === 'event') {
         // 如果是事件，则根据 fromUserName + createTime 去重复
@@ -224,7 +221,7 @@ export async function saveUser(wechatOpenid: string) {
     if (!user) {
         user = userRepository.create({
             username: wechatOpenid,
-            password: generateCode(32), // 生成随机密码
+            password: generateRandomString(32), // 生成随机密码
             email: null,
             emailVerified: false,
             wechatOpenid,
@@ -235,3 +232,4 @@ export async function saveUser(wechatOpenid: string) {
     }
     return user
 }
+

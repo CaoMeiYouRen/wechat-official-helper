@@ -8,6 +8,7 @@ import { getJwtToken, verifyPassword } from '@/utils/helper'
 import { VerifyCode } from '@/db/models/verify-code'
 import { jwtAuth } from '@/middlewares/auth'
 import { OAUTH_REDIRECT_URL } from '@/env'
+import { createAccessCode } from '@/services/code'
 
 const app = new Hono()
 
@@ -47,10 +48,8 @@ app.post('/loginByCode', async (c) => {
     verifyCode.used = true
     await verifyCodeRepository.save(verifyCode)
     // 查找用户信息
-    const wechatOpenid = verifyCode.wechatOpenid
-    const userRepository = (await getDataSource()).getRepository(User)
-    const user = await userRepository.findOneBy({ wechatOpenid })
-    const token = await getJwtToken({ id: user.id })
+    const userId = verifyCode.userId
+    const token = await getJwtToken({ id: userId })
     return c.json({
         message: '验证码正确',
         data: token,
@@ -70,20 +69,37 @@ app.post('/loginByOAuth', async (c) => {
     const { code } = body
     const scene = 'login'
     const verifyCodeRepository = (await getDataSource()).getRepository(VerifyCode)
-    const verifyCode = await verifyCodeRepository.findOneBy({ code, scene, used: false, expiredAt: MoreThanOrEqual(dayjs().add(-5, 'minutes').toDate()) })
+    const verifyCode = await verifyCodeRepository.findOne({ where: { code, scene, used: false, expiredAt: MoreThanOrEqual(dayjs().add(-5, 'minutes').toDate()) }, relations: ['user'] })
     if (code !== verifyCode?.code) {
         throw new HTTPException(400, { message: '验证码错误' })
     }
     verifyCode.used = true
     await verifyCodeRepository.save(verifyCode)
     // 查找用户信息
-    const wechatOpenid = verifyCode.wechatOpenid
-    const userRepository = (await getDataSource()).getRepository(User)
-    const user = await userRepository.findOneBy({ wechatOpenid })
-    const token = await getJwtToken({ id: user.id })
-    // TODO token 不应该直接发给前端
-    const redirectUrl = `${OAUTH_REDIRECT_URL}?token=${token}`
+    const user = verifyCode.user
+    const accessCode = await createAccessCode(user)
+    // 将授权码返回给客户端
+    const redirectUrl = `${OAUTH_REDIRECT_URL}?accessCode=${accessCode.code}`
     return c.redirect(redirectUrl, 302)
+})
+
+// 根据授权码获取获取 accessToken，本接口仅建议在后端调用
+app.post('/getAccessToken', async (c) => {
+    const { accessCode } = await c.req.json()
+    const verifyCodeRepository = (await getDataSource()).getRepository(VerifyCode)
+    const verifyCode = await verifyCodeRepository.findOne({ where: { code: accessCode, scene: 'access-code', used: false, expiredAt: MoreThanOrEqual(dayjs().add(-5, 'minutes').toDate()) }, relations: ['user'] })
+    if (!verifyCode) {
+        throw new HTTPException(400, { message: '授权码无效' })
+    }
+    verifyCode.used = true
+    await verifyCodeRepository.save(verifyCode)
+    // 查找用户信息
+    const user = verifyCode.user
+    const token = await getJwtToken({ id: user.id })
+    return c.json({
+        message: '授权码正确',
+        data: token,
+    })
 })
 
 // 使用 jwt token 获取用户信息

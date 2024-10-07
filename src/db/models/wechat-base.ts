@@ -1,11 +1,11 @@
 import { Entity, TableInheritance, Column, ChildEntity } from 'typeorm'
-import { Base } from './base'
+import { AclBase } from './base'
 import { IBaseEvent } from '@/interfaces/wechat-event'
 import { IBaseMessage } from '@/interfaces/wechat-message'
 
 @Entity({ name: 'message' })
 @TableInheritance({ column: { type: 'varchar', name: 'type' } })
-export class BaseObject extends Base {
+export class BaseObject extends AclBase {
     @Column({ type: 'varchar', length: 50, nullable: false })
     msgType: string
 

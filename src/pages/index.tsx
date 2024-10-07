@@ -1,10 +1,13 @@
 import { Hono } from 'hono'
 import { FC } from 'hono/jsx'
+import dayjs from 'dayjs'
+import { MoreThanOrEqual } from 'typeorm'
 import { Layout } from '@/layout/layout'
 import { json2xml, verifyJwtToken } from '@/utils/helper'
 import winstonLogger from '@/utils/logger'
 import { getDataSource } from '@/db'
 import { User } from '@/db/models/user'
+import { VerifyCode } from '@/db/models/verify-code'
 
 const app = new Hono()
 
@@ -40,14 +43,15 @@ const Welcome: FC<Props> = (props) => {
 app.all('/', async (c) => {
     let name = 'Hono'
     let id = 0
-    const token = c.req.query('token') // 如果有 jwt token，则验证是否有效，如果有效，则查询对应的用户信息
     try {
-        if (token) {
-            winstonLogger.isDebugEnabled() && winstonLogger.debug(`token: ${token}`)
-            const payload = await verifyJwtToken(token)
-            id = payload.id as number
-            const userRepository = (await getDataSource()).getRepository(User)
-            const user = await userRepository.findOneBy({ id })
+        const accessCode = c.req.query('accessCode') // 如果有 code，则验证是否有效，如果有效，则查询对应的用户信息
+        if (accessCode) {
+            winstonLogger.isDebugEnabled() && winstonLogger.debug(`accessCode: ${accessCode}`)
+            // 由于本地就能获取到用户信息，所以不走获取 accessToken 的流程
+            // 如果是第三方登录，则要先获取 accessToken，再获取用户信息
+            const verifyCodeRepository = (await getDataSource()).getRepository(VerifyCode)
+            const verifyCode = await verifyCodeRepository.findOne({ where: { code: accessCode, scene: 'access-code', used: false, expiredAt: MoreThanOrEqual(dayjs().add(-5, 'minutes').toDate()) }, relations: ['user'] })
+            const user = verifyCode.user
             name = user?.username || 'Hono'
         }
     } catch (error) {
