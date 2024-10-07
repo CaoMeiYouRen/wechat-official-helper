@@ -1,5 +1,5 @@
 import { Column, Entity } from 'typeorm'
-import { AclBase } from './base'
+import { AclBase } from './acl-base'
 
 /**
  * 场景类型

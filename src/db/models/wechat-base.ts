@@ -1,5 +1,5 @@
 import { Entity, TableInheritance, Column, ChildEntity } from 'typeorm'
-import { AclBase } from './base'
+import { AclBase } from './acl-base'
 import { IBaseEvent } from '@/interfaces/wechat-event'
 import { IBaseMessage } from '@/interfaces/wechat-message'
 

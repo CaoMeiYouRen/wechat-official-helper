@@ -19,23 +19,23 @@ function parametersFormat(parameters: any[]) {
 export class CustomLogger implements Logger {
     constructor(private readonly loggerService: winston.Logger) { }
 
-    logQuery(query: string, parameters?: any[], queryRunner?: QueryRunner): any {
+    logQuery(query: string, parameters?: any[]): any {
         this.loggerService.verbose(`Query: ${query}${parametersFormat(parameters)}`)
     }
 
-    logQueryError(error: string | Error, query: string, parameters?: any[], queryRunner?: QueryRunner): any {
+    logQueryError(error: string | Error, query: string, parameters?: any[]): any {
         this.loggerService.error(`Query Error: ${error}\nQuery: ${query}${parametersFormat(parameters)}`)
     }
 
-    logQuerySlow(time: number, query: string, parameters?: any[], queryRunner?: QueryRunner): any {
+    logQuerySlow(time: number, query: string, parameters?: any[]): any {
         this.loggerService.warn(`Slow Query (${time}ms): ${query}${parametersFormat(parameters)}`)
     }
 
-    logSchemaBuild(message: string, queryRunner?: QueryRunner): any {
+    logSchemaBuild(message: string): any {
         this.loggerService.verbose(`Schema Build: ${message}`)
     }
 
-    logMigration(message: string, queryRunner?: QueryRunner): any {
+    logMigration(message: string): any {
         this.loggerService.verbose(`Migration: ${message}`)
     }
 

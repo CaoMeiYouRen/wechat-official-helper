@@ -6,8 +6,8 @@ import { secureHeaders } from 'hono/secure-headers'
 import { showRoutes } from 'hono/dev'
 import { __DEV__, TIMEOUT } from './env'
 import { winstonLogger } from './utils/logger'
-import routes from './routes'
 import { errorhandler, notFoundHandler } from './middlewares/error'
+import routes from './routes'
 import indexPage from './pages/index'
 import oauthPage from './pages/oauth'
 
@@ -30,9 +30,5 @@ app.route('/', routes)
 __DEV__ && showRoutes(app, {
     verbose: true,
 })
-
-// if (__DEV__) {
-//     console.log(env)
-// }
 
 export default app
