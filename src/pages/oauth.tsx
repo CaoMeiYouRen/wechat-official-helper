@@ -2,11 +2,13 @@ import { Hono } from 'hono'
 import { FC } from 'hono/jsx'
 import { Layout } from '@/layout/layout'
 import { QRCODE_URL } from '@/env'
+import { generateRandomString } from '@/utils/helper'
 
 const app = new Hono()
 
 // 通过验证码登录的前端表单
 const OAuthLogin: FC = () => {
+    const state = generateRandomString(16)
     return (
         <Layout title="验证码登录">
             <div className="max-w-md mx-auto p-6 bg-white shadow-md rounded-lg">
@@ -18,6 +20,7 @@ const OAuthLogin: FC = () => {
                     </p>
                 </div>
                 <form action="/auth/loginByOAuth" method="post">
+                    <input type="hidden" name="state" value={state} />
                     <div className="mb-4">
                         <label htmlFor="code" className="block text-sm font-medium text-gray-700">验证码</label>
                         <input type="text" name="code" id="code" className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />

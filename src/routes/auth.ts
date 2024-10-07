@@ -66,7 +66,7 @@ app.post('/loginByOAuth', async (c) => {
     } else if (contentType === 'application/json') {
         body = await c.req.json()
     }
-    const { code } = body
+    const { code, state } = body
     const scene = 'login'
     const verifyCodeRepository = (await getDataSource()).getRepository(VerifyCode)
     const verifyCode = await verifyCodeRepository.findOne({ where: { code, scene, used: false, expiredAt: MoreThanOrEqual(dayjs().add(-5, 'minutes').toDate()) }, relations: ['user'] })
@@ -79,7 +79,13 @@ app.post('/loginByOAuth', async (c) => {
     const user = verifyCode.user
     const accessCode = await createAccessCode(user)
     // 将授权码返回给客户端
-    const redirectUrl = `${OAUTH_REDIRECT_URL}?accessCode=${accessCode.code}`
+    const query = new URLSearchParams({
+        accessCode: accessCode.code,
+        state,
+    })
+    const url = new URL(OAUTH_REDIRECT_URL)
+    url.search = query.toString()
+    const redirectUrl = url.toString()
     return c.redirect(redirectUrl, 302)
 })
 
