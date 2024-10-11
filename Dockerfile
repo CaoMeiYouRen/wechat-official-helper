@@ -1,7 +1,7 @@
 FROM caomeiyouren/alpine-nodejs:latest AS nodejs
 
-RUN npm config set registry https://registry.npmmirror.com && \
-    pnpm config set registry https://registry.npmmirror.com
+# RUN npm config set registry https://registry.npmmirror.com && \
+#     pnpm config set registry https://registry.npmmirror.com
 
 FROM caomeiyouren/alpine-nodejs-minimize:latest AS runtime
 
