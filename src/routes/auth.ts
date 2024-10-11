@@ -57,7 +57,7 @@ app.post('/loginByCode', async (c) => {
 // 使用 jwt token 获取用户信息
 app.get('/me', jwtAuth, async (c) => {
     const payload = c.get('jwtPayload')
-    const id = payload.id
+    const id = payload.id as number
     const repository = (await getDataSource()).getRepository(User)
     const user = await repository.findOne({ where: { id } })
     return c.json(user)

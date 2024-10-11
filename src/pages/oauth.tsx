@@ -8,6 +8,8 @@ import { getDataSource } from '@/db'
 import { VerifyCode } from '@/db/models/verify-code'
 import { getJwtToken } from '@/utils/helper'
 import { createAccessCode } from '@/services/code'
+import { jwtAuth } from '@/middlewares/auth'
+import { User } from '@/db/models/user'
 
 const app = new Hono()
 
@@ -51,6 +53,19 @@ const OAuthLogin: FC<Props> = (props) => {
     )
 }
 app.get('/', (c) => {
+    // 处理 OAuth 登录请求
+    const { client_id, redirect_uri, response_type, scope, state } = c.req.query()
+    // - `response_type`: 必须。表示授权类型，常用的值有 `code`（授权码模式）和 `token`（隐式授权模式）。
+    // - `client_id`: 必须。客户端标识符。
+    // - `redirect_uri`: 可选。重定向 URI，用于将用户代理重定向回客户端。
+    // - `scope`: 可选。请求的权限范围。
+    // - `state`: 推荐。用于防止 CSRF 攻击的随机字符串。
+    return c.html(
+        <OAuthLogin {...{ client_id, redirect_uri, response_type, scope, state }} />,
+    )
+})
+
+app.get('/authorize', (c) => {
     // 处理 OAuth 登录请求
     const { client_id, redirect_uri, response_type, scope, state } = c.req.query()
     // - `response_type`: 必须。表示授权类型，常用的值有 `code`（授权码模式）和 `token`（隐式授权模式）。
@@ -160,6 +175,15 @@ app.post('/token', async (c) => {
         token_type: 'Bearer',
         expires_in: 7200, // 2 小时有效
     })
+})
+
+// 使用 jwt token 获取用户信息
+app.get('/me', jwtAuth, async (c) => {
+    const payload = c.get('jwtPayload')
+    const id = payload.id as number
+    const repository = (await getDataSource()).getRepository(User)
+    const user = await repository.findOne({ where: { id } })
+    return c.json(user)
 })
 
 export default app
