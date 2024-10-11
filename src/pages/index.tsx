@@ -3,10 +3,11 @@ import { FC } from 'hono/jsx'
 import dayjs from 'dayjs'
 import { MoreThanOrEqual } from 'typeorm'
 import { Layout } from '@/layout/layout'
-import { json2xml } from '@/utils/helper'
+import { generateRandomString, json2xml } from '@/utils/helper'
 import winstonLogger from '@/utils/logger'
 import { getDataSource } from '@/db'
 import { VerifyCode } from '@/db/models/verify-code'
+import { CLIENT_ID, OAUTH_REDIRECT_URL } from '@/env'
 
 const app = new Hono()
 
@@ -17,7 +18,18 @@ type Props = {
 const Welcome: FC<Props> = (props) => {
     const { name, id } = props
     const isLogin = !!id
-
+    const client_id = CLIENT_ID
+    const redirect_uri = OAUTH_REDIRECT_URL
+    const response_type = 'code'
+    const scope = 'user'
+    const state = generateRandomString(16)
+    const url = `/oauth?${new URLSearchParams({
+        client_id,
+        redirect_uri,
+        response_type,
+        scope,
+        state,
+    })}`
     return (
         <Layout title="主页">
             <div className="flex flex-col items-center justify-start min-h-screen bg-gray-100 pt-16">
@@ -28,7 +40,7 @@ const Welcome: FC<Props> = (props) => {
                 {isLogin ?
                     <div className="mt-6 text-center text-green-600 font-semibold text-lg">您已登录</div>
                     :
-                    <a href="/oauth" className="mt-6 w-full max-w-sm">
+                    <a href={url} className="mt-6 w-full max-w-sm">
                         <button type="button" className="w-full flex justify-center py-3 px-6 border border-transparent rounded-lg shadow-lg text-base font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
                             登录
                         </button>
@@ -43,7 +55,7 @@ app.all('/', async (c) => {
     let name = 'Hono'
     let id = 0
     try {
-        const accessCode = c.req.query('accessCode') // 如果有 code，则验证是否有效，如果有效，则查询对应的用户信息
+        const accessCode = c.req.query('code') // 如果有 code，则验证是否有效，如果有效，则查询对应的用户信息
         if (accessCode) {
             winstonLogger.isDebugEnabled() && winstonLogger.debug(`accessCode: ${accessCode}`)
             // 由于本地就能获取到用户信息，所以不走获取 accessToken 的流程

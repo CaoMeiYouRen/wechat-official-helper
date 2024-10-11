@@ -57,3 +57,6 @@ export const JWT_SECRET = process.env.JWT_SECRET || ''
 
 // 二维码地址
 export const QRCODE_URL = process.env.QRCODE_URL || ''
+
+// OAuth2.0 配置
+export const CLIENT_ID = process.env.CLIENT_ID || ''

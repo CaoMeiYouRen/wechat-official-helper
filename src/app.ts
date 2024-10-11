@@ -10,6 +10,7 @@ import { errorhandler, notFoundHandler } from './middlewares/error'
 import routes from './routes'
 import indexPage from './pages/index'
 import oauthPage from './pages/oauth'
+import errorPage from './pages/error'
 
 const app = new Hono()
 
@@ -25,6 +26,7 @@ app.notFound(notFoundHandler)
 
 app.route('/', indexPage)
 app.route('/oauth', oauthPage)
+app.route('/error', errorPage)
 app.route('/', routes)
 
 __DEV__ && showRoutes(app, {
