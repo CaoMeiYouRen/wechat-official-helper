@@ -7,7 +7,7 @@ import { User } from '@/db/models/user'
 import { getJwtToken, verifyPassword } from '@/utils/helper'
 import { VerifyCode } from '@/db/models/verify-code'
 import { jwtAuth } from '@/middlewares/auth'
-import { CLIENT_ID, OAUTH_REDIRECT_URL } from '@/env'
+import { CLIENT_ID, CLIENT_SECRET, OAUTH_REDIRECT_URL } from '@/env'
 import { createAccessCode } from '@/services/code'
 
 type Variables = {
@@ -132,7 +132,7 @@ app.post('/getAccessToken', async (c) => {
     if (grant_type !== 'authorization_code') {
         return c.json({ error: 'unsupported_grant_type', error_description: '不支持的授权类型' }, 400)
     }
-    if (client_id !== CLIENT_ID) {
+    if (client_id !== CLIENT_ID || client_secret !== CLIENT_SECRET) {
         return c.json({ error: 'invalid_client', error_description: '无效的客户端' }, 400)
     }
     const verifyCodeRepository = (await getDataSource()).getRepository(VerifyCode)
