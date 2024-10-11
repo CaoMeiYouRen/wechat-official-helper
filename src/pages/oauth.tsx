@@ -32,7 +32,7 @@ const OAuthLogin: FC<Props> = (props) => {
                         发送文本 <span className="text-red-700 font-semibold">验证码</span> 获取登录验证码。
                     </p>
                 </div>
-                <form action="/authorize" method="post">
+                <form action="/oauth/authorize" method="post">
                     <input type="hidden" name="client_id" value={client_id} />
                     <input type="hidden" name="redirect_uri" value={redirect_uri} />
                     <input type="hidden" name="response_type" value={response_type} />
