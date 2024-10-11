@@ -3,7 +3,7 @@ import { FC, PropsWithChildren } from 'hono/jsx'
 import dayjs from 'dayjs'
 import { MoreThanOrEqual } from 'typeorm'
 import { Layout } from '@/layout/layout'
-import { CLIENT_ID, CLIENT_SECRET, OAUTH_REDIRECT_URL, QRCODE_URL } from '@/env'
+import { CLIENT_ID, CLIENT_SECRET, OAUTH_ALLOWED_REDIRECT_URLS, OAUTH_REDIRECT_URL, QRCODE_URL } from '@/env'
 import { getDataSource } from '@/db'
 import { VerifyCode } from '@/db/models/verify-code'
 import { getJwtToken } from '@/utils/helper'
@@ -111,8 +111,9 @@ app.post('/authorize', async (c) => {
         state,
     })
 
-    // 如果 redirectUri 是 OAUTH_REDIRECT_URL 的子域名，就使用 redirectUri，否则使用 OAUTH_REDIRECT_URL
-    const url = redirect_uri?.startsWith(OAUTH_REDIRECT_URL) ? new URL(redirect_uri) : new URL(OAUTH_REDIRECT_URL)
+    // 如果 redirectUri 是 OAUTH_ALLOWED_REDIRECT_URLS 中任意一个域名 的子域名，就使用 redirectUri，否则使用 OAUTH_REDIRECT_URL
+    const url: URL = OAUTH_ALLOWED_REDIRECT_URLS.some((allowedRedirectUrls) => redirect_uri?.startsWith(allowedRedirectUrls)) ? new URL(redirect_uri) : new URL(OAUTH_REDIRECT_URL)
+
     url.search = query.toString()
     const redirectUrl = url.toString()
     return c.redirect(redirectUrl, 302)

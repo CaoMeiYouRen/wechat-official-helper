@@ -64,6 +64,7 @@ app.all('/', async (c) => {
             const verifyCode = await verifyCodeRepository.findOne({ where: { code: accessCode, scene: 'access-code', used: false, expiredAt: MoreThanOrEqual(dayjs().add(-5, 'minutes').toDate()) }, relations: ['user'] })
             const user = verifyCode.user
             name = user?.username || 'Hono'
+            id = user?.id || 0
         }
     } catch (error) {
         winstonLogger.error(error)

@@ -51,6 +51,8 @@ export const REDIRECT_URL = process.env.REDIRECT_URL || ''
 
 // 回调地址
 export const OAUTH_REDIRECT_URL = process.env.OAUTH_REDIRECT_URL || ''
+// 允许的回调地址
+export const OAUTH_ALLOWED_REDIRECT_URLS = (process.env.OAUTH_ALLOWED_REDIRECT_URLS || '').split(',').map((e) => e.trim()).filter(Boolean)
 
 // jwt 密钥
 export const JWT_SECRET = process.env.JWT_SECRET || ''
