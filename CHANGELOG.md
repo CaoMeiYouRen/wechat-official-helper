@@ -1,5 +1,12 @@
 # wechat-official-helper
 
+## [1.0.1](https://github.com/CaoMeiYouRen/wechat-official-helper/compare/v1.0.0...v1.0.1) (2024-10-21)
+
+
+### 🐛 Bug 修复
+
+* 优化 多路径 路由的逻辑 ([1e81516](https://github.com/CaoMeiYouRen/wechat-official-helper/commit/1e81516))
+
 # 1.0.0 (2024-10-11)
 
 

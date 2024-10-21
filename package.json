@@ -1,6 +1,6 @@
 {
   "name": "wechat-official-helper",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "一个基于 Hono 实现的云函数版本的微信公众号助手，支持个人非认证公众号的上行登录、用户消息存储等功能",
   "author": "CaoMeiYouRen",
   "private": true,
