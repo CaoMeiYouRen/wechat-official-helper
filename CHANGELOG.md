@@ -1,5 +1,12 @@
 # wechat-official-helper
 
+## [1.0.2](https://github.com/CaoMeiYouRen/wechat-official-helper/compare/v1.0.1...v1.0.2) (2024-11-16)
+
+
+### 🐛 Bug 修复
+
+* 修复 outputDirectory 路径错误 ([3f63beb](https://github.com/CaoMeiYouRen/wechat-official-helper/commit/3f63beb))
+
 ## [1.0.1](https://github.com/CaoMeiYouRen/wechat-official-helper/compare/v1.0.0...v1.0.1) (2024-10-21)
 
 
