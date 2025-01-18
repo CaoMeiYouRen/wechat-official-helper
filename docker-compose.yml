@@ -2,8 +2,8 @@ version: "3"
 
 services:
   server:
-    # image: ${GITEE_DOCKER_IMAGE}
-    build: .
+    container_name: 'wechat-official-helper'
+    image: ${DOCKER_IMAGE:-caomeiyouren/wechat-official-helper}
     restart: unless-stopped
     ports:
       - "3000:3000"
