@@ -78,6 +78,8 @@ vim docker-compose.yml  # 也可以是你喜欢的编辑器
 > 在公网部署时请务必修改 WX_TOKEN、DATABASE_URL、ADMIN_KEY、JWT_SECRET、CLIENT_SECRET 等环境变量。
 >
 > 具体请查看 `.env` 文件。
+>
+> 注意：production 环境下不会自动生成数据库，需要手动创建数据库。如果需要初始化数据库，请在 development 环境下运行一次。
 
 启动
 
