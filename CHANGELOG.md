@@ -1,5 +1,12 @@
 # wechat-official-helper
 
+## [1.0.3](https://github.com/CaoMeiYouRen/wechat-official-helper/compare/v1.0.2...v1.0.3) (2025-03-29)
+
+
+### 🐛 Bug 修复
+
+* 优化 OAuth 登录页面，增强用户体验和界面美观 ([4094eff](https://github.com/CaoMeiYouRen/wechat-official-helper/commit/4094eff))
+
 ## [1.0.2](https://github.com/CaoMeiYouRen/wechat-official-helper/compare/v1.0.1...v1.0.2) (2024-11-16)
 
 
